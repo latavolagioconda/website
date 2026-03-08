@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/navbar'
+import { gravatarUrl } from '@/lib/gravatar'
 
 export default async function DashboardLayout({
   children,
@@ -19,7 +20,7 @@ export default async function DashboardLayout({
 
   const { data: socio, error: errSocio } = await supabase
     .from('soci')
-    .select('nome, cognome, ruolo, nickname')
+    .select('nome, cognome, ruolo, nickname, avatar_url, email')
     .eq('auth_user_id', user.id)
     .single()
 
@@ -34,7 +35,13 @@ export default async function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar nome={socio.nome} cognome={socio.cognome} ruolo={socio.ruolo} nickname={socio.nickname} />
+      <Navbar
+          nome={socio.nome}
+          cognome={socio.cognome}
+          ruolo={socio.ruolo}
+          nickname={socio.nickname}
+          avatarSrc={socio.avatar_url || gravatarUrl(socio.email)}
+        />
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">{children}</main>
     </div>
   )

@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import { Lock } from 'lucide-react'
 
 export function NavbarPubblica() {
   return (
@@ -9,7 +10,10 @@ export function NavbarPubblica() {
           La Tavola Gioconda
         </Link>
         <Button asChild variant="outline" size="sm">
-          <Link href="/area-riservata">Area riservata</Link>
+          <Link href="/area-riservata" className="flex items-center gap-2">
+            <Lock className="h-3.5 w-3.5" />
+            Area riservata
+          </Link>
         </Button>
       </div>
     </header>
