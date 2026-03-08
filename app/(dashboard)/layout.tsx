@@ -36,12 +36,14 @@ export default async function DashboardLayout({
   return (
     <div className="min-h-screen bg-background">
       <Navbar
-          nome={socio.nome}
-          cognome={socio.cognome}
-          ruolo={socio.ruolo}
-          nickname={socio.nickname}
-          avatarSrc={socio.avatar_url || gravatarUrl(socio.email)}
-        />
+        socio={{
+          nome: socio.nome,
+          cognome: socio.cognome,
+          ruolo: socio.ruolo,
+          nickname: socio.nickname,
+          avatarSrc: socio.avatar_url || gravatarUrl(socio.email),
+        }}
+      />
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">{children}</main>
     </div>
   )

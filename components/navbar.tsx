@@ -13,7 +13,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Separator } from '@/components/ui/separator'
 import {
   LayoutDashboard,
   Calendar,
@@ -24,12 +23,16 @@ import {
   LogOut,
 } from 'lucide-react'
 
-interface NavbarProps {
+interface SocioNavbar {
   nome: string
   cognome: string
   ruolo: string
   nickname?: string | null
   avatarSrc?: string
+}
+
+interface NavbarProps {
+  socio?: SocioNavbar | null
 }
 
 const vociBase = [
@@ -38,30 +41,34 @@ const vociBase = [
   { href: '/profilo',   etichetta: 'Profilo',    Icona: User },
 ]
 
-export function Navbar({ nome, cognome, ruolo, nickname, avatarSrc }: NavbarProps) {
+export function Navbar({ socio }: NavbarProps) {
   const pathname = usePathname()
   const [menuAperto, setMenuAperto] = useState(false)
 
-  const iniziali = `${nome[0]}${cognome[0]}`.toUpperCase()
-  const nomeVisualizzato = nickname || `${nome} ${cognome}`
+  const voci = socio
+    ? [...vociBase, ...(socio.ruolo === 'admin' ? [{ href: '/soci', etichetta: 'Soci', Icona: Users }] : [])]
+    : []
 
-  const voci = [
-    ...vociBase,
-    ...(ruolo === 'admin' ? [{ href: '/soci', etichetta: 'Soci', Icona: Users }] : []),
-  ]
+  const iniziali = socio ? `${socio.nome[0]}${socio.cognome[0]}`.toUpperCase() : ''
+  const nomeVisualizzato = socio ? (socio.nickname || `${socio.nome} ${socio.cognome}`) : ''
 
   return (
     <>
-      <header className="border-b bg-background">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
+      <nav className="sticky top-0 z-40 flex items-center justify-between px-8 sm:px-16 py-5 bg-background border-b-2 border-foreground">
+        <Link href="/" className="hover:opacity-80 transition-opacity">
+          <img src="/logotipo.svg" alt="La Tavola Gioconda" className="h-10 w-auto" />
+        </Link>
 
-          {/* Logo */}
-          <Link href="/" className="hover:opacity-80 transition-opacity">
-            <img src="/logotipo.svg" alt="La Tavola Gioconda" className="h-8 w-auto" />
+        {!socio ? (
+          <Link
+            href="/area-riservata"
+            className="text-[0.85rem] tracking-[0.05em] px-6 py-2.5 border-2 border-foreground hover:bg-foreground hover:text-background transition-colors duration-200"
+          >
+            Area riservata
           </Link>
-
+        ) : (
           <div className="flex items-center gap-1">
-            {/* Navigazione desktop — solo icone con tooltip nativo */}
+            {/* Navigazione desktop — icone con tooltip */}
             <nav className="hidden sm:flex items-center gap-1 mr-2">
               {voci.map(({ href, etichetta, Icona }) => (
                 <Link
@@ -85,7 +92,7 @@ export function Navbar({ nome, cognome, ruolo, nickname, avatarSrc }: NavbarProp
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-9 w-9 rounded-full p-0">
                   <Avatar className="h-9 w-9">
-                    <AvatarImage src={avatarSrc} alt={nomeVisualizzato} />
+                    <AvatarImage src={socio.avatarSrc} alt={nomeVisualizzato} />
                     <AvatarFallback>{iniziali}</AvatarFallback>
                   </Avatar>
                 </Button>
@@ -93,10 +100,10 @@ export function Navbar({ nome, cognome, ruolo, nickname, avatarSrc }: NavbarProp
               <DropdownMenuContent align="end" className="w-48">
                 <div className="px-2 py-1.5">
                   <p className="text-sm font-medium">{nomeVisualizzato}</p>
-                  {nickname && (
-                    <p className="text-xs text-muted-foreground">{nome} {cognome}</p>
+                  {socio.nickname && (
+                    <p className="text-xs text-muted-foreground">{socio.nome} {socio.cognome}</p>
                   )}
-                  <p className="text-xs text-muted-foreground capitalize">{ruolo}</p>
+                  <p className="text-xs text-muted-foreground capitalize">{socio.ruolo}</p>
                 </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
@@ -110,7 +117,7 @@ export function Navbar({ nome, cognome, ruolo, nickname, avatarSrc }: NavbarProp
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* Hamburger — solo mobile */}
+            {/* Hamburger mobile */}
             <Button
               variant="ghost"
               size="icon"
@@ -121,37 +128,26 @@ export function Navbar({ nome, cognome, ruolo, nickname, avatarSrc }: NavbarProp
               <Menu className="h-5 w-5" />
             </Button>
           </div>
-        </div>
-      </header>
+        )}
+      </nav>
 
-      {/* Menu mobile */}
-      {menuAperto && (
+      {/* Menu mobile — solo se autenticato */}
+      {socio && menuAperto && (
         <>
-          {/* Overlay scuro */}
           <div
             className="fixed inset-0 z-40 bg-black/50 sm:hidden"
             onClick={() => setMenuAperto(false)}
           />
-
-          {/* Pannello laterale */}
-          <div className="fixed inset-y-0 right-0 z-50 flex w-64 flex-col bg-background border-l shadow-xl sm:hidden">
-            {/* Intestazione pannello */}
-            <div className="flex h-16 items-center justify-between border-b px-4">
+          <div className="fixed inset-y-0 right-0 z-50 flex w-64 flex-col bg-background border-l-2 border-foreground shadow-xl sm:hidden">
+            <div className="flex h-16 items-center justify-between border-b-2 border-foreground px-4">
               <div>
                 <p className="text-sm font-medium">{nomeVisualizzato}</p>
-                <p className="text-xs text-muted-foreground capitalize">{ruolo}</p>
+                <p className="text-xs text-muted-foreground capitalize">{socio.ruolo}</p>
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setMenuAperto(false)}
-                aria-label="Chiudi menu"
-              >
+              <Button variant="ghost" size="icon" onClick={() => setMenuAperto(false)} aria-label="Chiudi menu">
                 <X className="h-5 w-5" />
               </Button>
             </div>
-
-            {/* Voci di navigazione */}
             <nav className="flex flex-1 flex-col gap-1 p-4">
               {voci.map(({ href, etichetta, Icona }) => (
                 <Link
@@ -169,10 +165,7 @@ export function Navbar({ nome, cognome, ruolo, nickname, avatarSrc }: NavbarProp
                 </Link>
               ))}
             </nav>
-
-            {/* Logout in fondo */}
-            <div className="border-t p-4">
-              <Separator className="mb-4" />
+            <div className="border-t-2 border-foreground p-4">
               <form action={logout}>
                 <button
                   type="submit"

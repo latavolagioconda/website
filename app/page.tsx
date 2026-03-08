@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { NavbarPubblica } from '@/components/homepage/navbar-pubblica'
 import { Navbar } from '@/components/navbar'
 import { CalendarioPubblico } from '@/components/homepage/calendario-pubblico'
 import { createClient } from '@/lib/supabase/server'
@@ -56,17 +55,15 @@ export default async function HomePage() {
       </div>*/}
 
       {/* Navbar */}
-      {socio ? (
-        <Navbar
-          nome={socio.nome}
-          cognome={socio.cognome}
-          ruolo={socio.ruolo}
-          nickname={socio.nickname}
-          avatarSrc={socio.avatar_url || gravatarUrl(socio.email)}
-        />
-      ) : (
-        <NavbarPubblica />
-      )}
+      <Navbar
+        socio={socio ? {
+          nome: socio.nome,
+          cognome: socio.cognome,
+          ruolo: socio.ruolo,
+          nickname: socio.nickname,
+          avatarSrc: socio.avatar_url || gravatarUrl(socio.email),
+        } : null}
+      />
 
       {/* Hero — split grid */}
       <section className="grid sm:grid-cols-2 border-b-2 border-foreground" style={{ minHeight: '88vh' }}>

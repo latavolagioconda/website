@@ -39,7 +39,7 @@ export default async function ProfiloPage() {
   })
 
   return (
-    <div className="mx-auto max-w-2xl space-y-8">
+    <div className="space-y-8">
       {/* Intestazione */}
       <div className="flex items-center gap-4">
         <Avatar className="h-16 w-16">
