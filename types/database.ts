@@ -206,21 +206,7 @@ export type Database = {
       }
     }
     Views: {
-      vista_profili_pubblici: {
-        Row: {
-          avatar_url: string | null
-          bio: string | null
-          cognome: string | null
-          data_iscrizione: string
-          data_nascita: string | null
-          email: string | null
-          giochi_preferiti: string[] | null
-          nickname: string | null
-          nome: string | null
-          slug: string
-          telefono: string | null
-        }
-      }
+      [_ in never]: never
     }
     Functions: {
       is_admin: { Args: never; Returns: boolean }
@@ -356,3 +342,18 @@ export const Constants = {
     Enums: {},
   },
 } as const
+
+/** Tipo per le righe della vista vista_profili_pubblici (non gestita dai tipi generati) */
+export interface VistaProfiliPubblici {
+  slug: string
+  nickname: string | null
+  nome: string | null
+  cognome: string | null
+  data_iscrizione: string
+  avatar_url: string | null
+  bio: string | null
+  giochi_preferiti: string[] | null
+  email: string | null
+  telefono: string | null
+  data_nascita: string | null
+}

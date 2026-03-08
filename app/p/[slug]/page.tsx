@@ -8,6 +8,7 @@ import { Separator } from '@/components/ui/separator'
 import Link from 'next/link'
 import { Mail, Phone, Calendar, Gamepad2 } from 'lucide-react'
 import { gravatarUrl } from '@/lib/gravatar'
+import type { VistaProfiliPubblici } from '@/types/database'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -20,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .from('vista_profili_pubblici')
     .select('nickname, nome, cognome')
     .eq('slug', slug)
-    .single()
+    .single() as { data: Pick<VistaProfiliPubblici, 'nickname' | 'nome' | 'cognome'> | null }
 
   if (!data) return { title: 'Profilo non trovato — La Tavola Gioconda' }
 
@@ -36,7 +37,7 @@ export default async function ProfiloPubblicoPage({ params }: Props) {
     .from('vista_profili_pubblici')
     .select('*')
     .eq('slug', slug)
-    .single()
+    .single() as { data: VistaProfiliPubblici | null }
 
   if (!profilo) notFound()
 
