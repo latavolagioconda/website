@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexus Ludico — Il Gioco è la Nostra Lingua</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F5F0E8;
+    --ink: #1A1410;
+    --rust: #662c91;
+    --gold: #D4A017;
+    --sage: #5C7A5A;
+    --sky: #3A6B8A;
+    --pale: #EDE8DE;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Fraunces', Georgia, serif;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999; opacity: .5;
+  }
+
+  /* ── SCROLLING TICKER ── */
+  .ticker-wrap {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 10px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    letter-spacing: .08em;
+  }
+  .ticker-inner {
+    display: inline-block;
+    animation: ticker 28s linear infinite;
+  }
+  .ticker-inner span {
+    margin: 0 2rem;
+    color: var(--gold);
+  }
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ── NAV ── */
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 60px;
+    position: sticky; top: 0; z-index: 100;
+    background: var(--cream);
+    border-bottom: 2px solid var(--ink);
+  }
+  .nav-logo {
+    font-size: 1.5rem; font-weight: 900;
+    letter-spacing: -.02em;
+    font-optical-sizing: auto;
+  }
+  .nav-logo em { color: var(--rust); font-style: italic; }
+  .nav-actions {
+    display: flex; gap: 12px; align-items: center;
+  }
+  .nav-cta {
+    background: var(--ink); color: var(--cream);
+    padding: 10px 24px; border: none; cursor: pointer;
+    font-family: 'DM Mono', monospace; font-size: .85rem;
+    letter-spacing: .05em; text-decoration: none;
+    display: inline-block;
+    transition: background .2s, color .2s;
+  }
+  .nav-cta:hover { background: var(--rust); }
+  .nav-cta-ghost {
+    background: transparent; color: var(--ink);
+    padding: 10px 24px; border: 2px solid var(--ink); cursor: pointer;
+    font-family: 'DM Mono', monospace; font-size: .85rem;
+    letter-spacing: .05em; text-decoration: none;
+    display: inline-block;
+    transition: background .2s, color .2s;
+  }
+  .nav-cta-ghost:hover { background: var(--ink); color: var(--cream); }
+
+  /* ── HERO ── */
+  .hero {
+    display: grid; grid-template-columns: 1fr 1fr;
+    min-height: 88vh;
+    border-bottom: 2px solid var(--ink);
+  }
+  .hero-left {
+    padding: 80px 60px;
+    display: flex; flex-direction: column; justify-content: center;
+    border-right: 2px solid var(--ink);
+  }
+  .hero-tag {
+    font-family: 'DM Mono', monospace; font-size: .75rem;
+    letter-spacing: .15em; text-transform: uppercase;
+    color: var(--rust); margin-bottom: 24px;
+  }
+  .hero-title {
+    font-size: clamp(3rem, 5.5vw, 5.5rem);
+    font-weight: 900; line-height: 1.0;
+    letter-spacing: -.03em;
+    font-optical-sizing: auto;
+  }
+  .hero-title .italic-line {
+    font-style: italic; font-weight: 300;
+    color: var(--rust);
+  }
+  .hero-subtitle {
+    margin-top: 28px;
+    font-size: 1.15rem; font-weight: 300;
+    line-height: 1.65; max-width: 420px;
+    font-optical-sizing: auto;
+  }
+  .hero-actions {
+    margin-top: 44px;
+    display: flex; gap: 16px; align-items: center;
+  }
+  .btn-primary {
+    background: var(--rust); color: #fff;
+    padding: 16px 36px; border: none; cursor: pointer;
+    font-family: 'DM Mono', monospace; font-size: .9rem;
+    letter-spacing: .06em; text-transform: uppercase;
+    transition: transform .2s, box-shadow .2s;
+    box-shadow: 4px 4px 0 var(--ink);
+    text-decoration: none; display: inline-block;
+  }
+  .btn-primary:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
+  .btn-secondary {
+    font-family: 'DM Mono', monospace; font-size: .85rem;
+    letter-spacing: .06em; color: var(--ink);
+    text-decoration: none; border-bottom: 1px solid currentColor;
+    padding-bottom: 2px;
+  }
+
+  /* dice SVG visual */
+  .hero-right {
+    position: relative; overflow: hidden;
+    background: var(--ink);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hero-grid-bg {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(var(--pale) 1px, transparent 1px),
+      linear-gradient(90deg, var(--pale) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: .05;
+  }
+  .big-dice {
+    position: relative; z-index: 2;
+    animation: float 4s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%,100% { transform: translateY(0) rotate(-6deg); }
+    50% { transform: translateY(-18px) rotate(4deg); }
+  }
+  .hero-number {
+    position: absolute; bottom: 40px; right: 50px;
+    font-size: 9rem; font-weight: 900; color: rgba(255,255,255,.04);
+    font-optical-sizing: auto; line-height: 1; user-select: none;
+  }
+
+  /* ── MARQUEE DIVIDER ── */
+  .marquee-divider {
+    background: var(--rust); color: #fff;
+    padding: 14px 0; overflow: hidden;
+    border-top: 2px solid var(--ink);
+    border-bottom: 2px solid var(--ink);
+  }
+  .marquee-inner {
+    display: inline-block;
+    animation: ticker 20s linear infinite;
+    font-family: 'Fraunces', serif;
+    font-style: italic; font-size: 1.3rem;
+    font-optical-sizing: auto;
+    white-space: nowrap;
+  }
+  .marquee-inner span { margin: 0 1.5rem; opacity: .6; }
+
+  /* ── ABOUT ── */
+  .about {
+    display: grid; grid-template-columns: 1fr 1fr;
+    border-bottom: 2px solid var(--ink);
+  }
+  .about-img {
+    background: var(--sage);
+    min-height: 420px;
+    display: flex; align-items: center; justify-content: center;
+    border-right: 2px solid var(--ink);
+    position: relative; overflow: hidden;
+  }
+  .about-img .big-emoji {
+    font-size: 8rem;
+    animation: spin-slow 20s linear infinite;
+    display: block;
+  }
+  @keyframes spin-slow {
+    to { transform: rotate(360deg); }
+  }
+  .about-img .corner-num {
+    position: absolute; bottom: 20px; left: 24px;
+    font-family: 'DM Mono', monospace; font-size: .7rem;
+    color: rgba(255,255,255,.4); letter-spacing: .1em;
+  }
+  .about-text {
+    padding: 70px 60px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .section-label {
+    font-family: 'DM Mono', monospace; font-size: .7rem;
+    letter-spacing: .2em; text-transform: uppercase;
+    color: var(--sky); margin-bottom: 20px;
+  }
+  .section-title {
+    font-size: clamp(2rem, 3.2vw, 3rem);
+    font-weight: 700; line-height: 1.15;
+    letter-spacing: -.02em; font-optical-sizing: auto;
+    margin-bottom: 24px;
+  }
+  .section-title em { font-style: italic; color: var(--sage); }
+  .about-text p {
+    font-size: 1.05rem; line-height: 1.75;
+    font-weight: 300; font-optical-sizing: auto;
+    margin-bottom: 16px; max-width: 480px;
+  }
+  .stat-row {
+    display: flex; gap: 40px; margin-top: 36px;
+  }
+  .stat { text-align: left; }
+  .stat-num {
+    font-size: 2.8rem; font-weight: 900;
+    letter-spacing: -.04em; font-optical-sizing: auto;
+    color: var(--rust);
+  }
+  .stat-label {
+    font-family: 'DM Mono', monospace; font-size: .7rem;
+    letter-spacing: .1em; text-transform: uppercase; color: #888;
+  }
+
+  /* ── EVENTS ── */
+  .events {
+    padding: 80px 60px;
+    border-bottom: 2px solid var(--ink);
+  }
+  .events-header {
+    display: flex; align-items: baseline;
+    justify-content: space-between; margin-bottom: 50px;
+  }
+  .events-header .section-title { margin-bottom: 0; }
+  .view-all {
+    font-family: 'DM Mono', monospace; font-size: .8rem;
+    letter-spacing: .08em; color: var(--ink);
+    text-decoration: none; border-bottom: 1px solid;
+  }
+  .events-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border: 2px solid var(--ink);
+  }
+  .event-card {
+    padding: 36px 32px;
+    border-right: 2px solid var(--ink);
+    position: relative; overflow: hidden;
+    transition: background .25s;
+    cursor: pointer;
+  }
+  .event-card:last-child { border-right: none; }
+  .event-card:hover { background: var(--ink); color: var(--cream); }
+  .event-card:hover .event-tag { color: var(--gold); }
+  .event-card:hover .event-arrow { color: var(--rust); }
+  .event-date {
+    font-family: 'DM Mono', monospace; font-size: .75rem;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: #888; margin-bottom: 12px;
+    transition: color .25s;
+  }
+  .event-card:hover .event-date { color: rgba(255,255,255,.4); }
+  .event-tag {
+    font-family: 'DM Mono', monospace; font-size: .65rem;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--rust); margin-bottom: 14px;
+    display: block; transition: color .25s;
+  }
+  .event-name {
+    font-size: 1.45rem; font-weight: 700; line-height: 1.2;
+    font-optical-sizing: auto; margin-bottom: 12px;
+  }
+  .event-desc {
+    font-size: .9rem; font-weight: 300; line-height: 1.6;
+    font-optical-sizing: auto; opacity: .7;
+  }
+  .event-arrow {
+    position: absolute; bottom: 28px; right: 28px;
+    font-size: 1.5rem; color: var(--pale); transition: color .25s;
+  }
+
+  /* ── GAMES SECTION ── */
+  .games {
+    display: grid; grid-template-columns: 380px 1fr;
+    border-bottom: 2px solid var(--ink);
+  }
+  .games-sidebar {
+    padding: 70px 50px;
+    background: var(--ink); color: var(--cream);
+    display: flex; flex-direction: column; justify-content: center;
+    border-right: 2px solid var(--ink);
+  }
+  .games-sidebar .section-label { color: var(--gold); }
+  .games-sidebar .section-title { color: var(--cream); }
+  .games-sidebar .section-title em { color: var(--gold); }
+  .games-sidebar p {
+    font-size: 1rem; font-weight: 300; line-height: 1.7;
+    opacity: .75; font-optical-sizing: auto; margin-top: 16px;
+  }
+  .games-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+  .game-tile {
+    padding: 44px 40px;
+    border-bottom: 2px solid var(--ink);
+    border-right: 2px solid var(--ink);
+    position: relative; overflow: hidden;
+    cursor: pointer;
+    transition: background .25s;
+  }
+  .game-tile:nth-child(2n) { border-right: none; }
+  .game-tile:nth-child(3), .game-tile:nth-child(4) { border-bottom: none; }
+  .game-tile:hover { background: var(--pale); }
+  .game-icon { font-size: 2.8rem; margin-bottom: 16px; display: block; }
+  .game-tile h3 {
+    font-size: 1.2rem; font-weight: 700;
+    font-optical-sizing: auto; margin-bottom: 8px;
+  }
+  .game-tile p {
+    font-size: .9rem; font-weight: 300; line-height: 1.6;
+    font-optical-sizing: auto; opacity: .65;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink); color: var(--cream);
+    padding: 60px;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    border-top: 2px solid var(--ink);
+  }
+  .footer-brand .nav-logo { color: var(--cream); font-size: 1.6rem; margin-bottom: 16px; }
+  .footer-brand p {
+    font-size: .9rem; font-weight: 300;
+    line-height: 1.65; opacity: .55; max-width: 240px;
+    font-optical-sizing: auto;
+  }
+  .footer-col h4 {
+    font-family: 'DM Mono', monospace; font-size: .7rem;
+    letter-spacing: .15em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 20px;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col ul li {
+    margin-bottom: 10px;
+    font-size: .9rem; font-weight: 300; opacity: .6;
+    font-optical-sizing: auto;
+  }
+  .footer-col ul li a { color: inherit; text-decoration: none; }
+  .footer-col ul li a:hover { opacity: 1; }
+  .footer-bottom {
+    background: var(--ink); color: rgba(255,255,255,.3);
+    padding: 20px 60px;
+    display: flex; justify-content: space-between;
+    font-family: 'DM Mono', monospace; font-size: .7rem;
+    letter-spacing: .08em; border-top: 1px solid rgba(255,255,255,.08);
+  }
+
+  /* ── ANIMATIONS ── */
+  .fade-up {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity .7s ease, transform .7s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    .hero, .about, .games { grid-template-columns: 1fr; }
+    .hero-left { padding: 50px 24px; border-right: none; border-bottom: 2px solid var(--ink); }
+    .hero-right { min-height: 300px; }
+    .about-img { border-right: none; border-bottom: 2px solid var(--ink); }
+    .about-text { padding: 50px 24px; }
+    .events { padding: 50px 24px; }
+    .events-grid { grid-template-columns: 1fr; }
+    .event-card { border-right: none; border-bottom: 2px solid var(--ink); }
+    .games-sidebar { padding: 50px 24px; border-right: none; border-bottom: 2px solid var(--ink); }
+    .games-grid { grid-template-columns: 1fr 1fr; }
+    footer { grid-template-columns: 1fr; padding: 40px 24px; }
+    .footer-bottom { padding: 16px 24px; flex-direction: column; gap: 6px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-inner">
+    🎲 Prossimo evento: Torneo di Catan — 15 Marzo &nbsp;
+    <span>✦</span> &nbsp;
+    Serata Dungeon & Dragons ogni Venerdì &nbsp;
+    <span>✦</span> &nbsp;
+    Nuovi soci: iscrizioni aperte per il 2025 &nbsp;
+    <span>✦</span> &nbsp;
+    Siamo al Centro Giovani di Rivalta di Torino &nbsp;
+    <span>✦</span> &nbsp;
+    🎲 Prossimo evento: Torneo di Catan — 15 Marzo &nbsp;
+    <span>✦</span> &nbsp;
+    Serata Dungeon & Dragons ogni Venerdì &nbsp;
+    <span>✦</span> &nbsp;
+    Nuovi soci: iscrizioni aperte per il 2025 &nbsp;
+    <span>✦</span> &nbsp;
+    Siamo al Centro Giovani di Rivalta di Torino &nbsp;
+    <span>✦</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Nexus <em>Ludico</em></div>
+  <div class="nav-actions">
+    <a href="#" class="nav-cta-ghost">Area riservata</a>
+    <a href="#" class="nav-cta">Unisciti a noi</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <p class="hero-tag">// Associazione Ludica · Rivalta di Torino</p>
+    <h1 class="hero-title">
+      Il gioco<br>
+      <span class="italic-line">è la nostra</span><br>
+      lingua
+    </h1>
+    <p class="hero-subtitle">
+      A Rivalta di Torino, al Centro Giovani Comunale, dadi, carte e pedine diventano ponti tra persone.
+      Entra nella nostra comunità: tornei, serate di gioco e molto altro.
+    </p>
+    <div class="hero-actions">
+      <a href="#agenda" class="btn-primary">Scopri gli eventi</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-grid-bg"></div>
+    <svg class="big-dice" width="220" height="220" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- D20 shape -->
+      <polygon points="110,14 196,64 196,156 110,206 24,156 24,64" fill="none" stroke="#D4A017" stroke-width="3"/>
+      <polygon points="110,14 196,64 110,90" fill="rgba(212,160,23,0.08)" stroke="#D4A017" stroke-width="1.5"/>
+      <polygon points="110,14 24,64 110,90" fill="rgba(212,160,23,0.06)" stroke="#D4A017" stroke-width="1.5"/>
+      <polygon points="196,64 196,156 110,130 110,90" fill="rgba(212,160,23,0.12)" stroke="#D4A017" stroke-width="1.5"/>
+      <polygon points="24,64 110,90 110,130 24,156" fill="rgba(212,160,23,0.06)" stroke="#D4A017" stroke-width="1.5"/>
+      <polygon points="110,130 196,156 110,206 24,156" fill="rgba(212,160,23,0.1)" stroke="#D4A017" stroke-width="1.5"/>
+      <!-- Center number -->
+      <text x="110" y="122" text-anchor="middle" fill="#D4A017" font-family="Fraunces, serif" font-size="34" font-weight="900">20</text>
+      <!-- Glow circles -->
+      <circle cx="110" cy="110" r="90" fill="none" stroke="rgba(212,160,23,0.1)" stroke-width="1" stroke-dasharray="4 6"/>
+      <circle cx="110" cy="110" r="105" fill="none" stroke="rgba(212,160,23,0.05)" stroke-width="1"/>
+    </svg>
+    <div class="hero-number">D20</div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-divider">
+  <div class="marquee-inner">
+    Giochi da tavolo &nbsp;<span>✦</span>&nbsp; Giochi di ruolo &nbsp;<span>✦</span>&nbsp; Wargame &nbsp;<span>✦</span>&nbsp; Card Games &nbsp;<span>✦</span>&nbsp; Tornei &nbsp;<span>✦</span>&nbsp; Biblioteca ludica &nbsp;<span>✦</span>&nbsp;
+    Giochi da tavolo &nbsp;<span>✦</span>&nbsp; Giochi di ruolo &nbsp;<span>✦</span>&nbsp; Wargame &nbsp;<span>✦</span>&nbsp; Card Games &nbsp;<span>✦</span>&nbsp; Tornei &nbsp;<span>✦</span>&nbsp; Biblioteca ludica &nbsp;<span>✦</span>&nbsp;
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="about">
+  <div class="about-img">
+    <span class="big-emoji">🎲</span>
+    <div class="corner-num">EST. 2008</div>
+  </div>
+  <div class="about-text fade-up">
+    <p class="section-label">// Chi siamo</p>
+    <h2 class="section-title">Il cuore ludico <em>di Rivalta</em></h2>
+    <p>Nexus Ludico è un'associazione nata e cresciuta a Rivalta di Torino, ospitata al Centro Giovani Comunale. La nostra missione è semplice: portare il gioco al centro della vita sociale del paese.</p>
+    <p>Dai classici astratti ai GDR narrativi, dalle battaglie in miniatura ai card game competitivi — una comunità aperta a tutti i rivaltesi e non solo.</p>
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-num">400+</div>
+        <div class="stat-label">Titoli in biblioteca</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">280</div>
+        <div class="stat-label">Soci attivi</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">16</div>
+        <div class="stat-label">Anni di storia</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EVENTS -->
+<section id="agenda" class="events">
+  <div class="events-header fade-up">
+    <div>
+      <p class="section-label">// Prossimi appuntamenti</p>
+      <h2 class="section-title">In <em>agenda</em></h2>
+    </div>
+    <a href="#" class="view-all">Tutti gli eventi →</a>
+  </div>
+  <div class="events-grid fade-up">
+    <div class="event-card">
+      <div class="event-date">Sabato 15 Marzo 2025</div>
+      <span class="event-tag">Torneo</span>
+      <h3 class="event-name">Catan Championship</h3>
+      <p class="event-desc">Sfida i migliori costruttori dell'isola. 4 tavoli, eliminazione diretta, premi per i primi tre classificati.</p>
+      <div class="event-arrow">→</div>
+    </div>
+    <div class="event-card">
+      <div class="event-date">Venerdì 21 Marzo 2025</div>
+      <span class="event-tag">GDR</span>
+      <h3 class="event-name">Serata D&D One-Shot</h3>
+      <p class="event-desc">Un'avventura autonoma in una sessione. Aperta a tutti, anche a chi non ha mai giocato. Master esperto a disposizione.</p>
+      <div class="event-arrow">→</div>
+    </div>
+    <div class="event-card">
+      <div class="event-date">Domenica 30 Marzo 2025</div>
+      <span class="event-tag">Workshop</span>
+      <h3 class="event-name">Introduzione ai Wargame</h3>
+      <p class="event-desc">Pomeriggio dedicato a chi vuole scoprire il mondo delle miniature e delle battaglie tattiche. Materiali inclusi.</p>
+      <div class="event-arrow">→</div>
+    </div>
+  </div>
+</section>
+
+<!-- GAMES -->
+<section class="games">
+  <div class="games-sidebar fade-up">
+    <p class="section-label">// La nostra offerta</p>
+    <h2 class="section-title">Un universo di <em>giochi</em></h2>
+    <p>La nostra biblioteca copre ogni genere e ogni stile. Consulta il catalogo online oppure vieni a sfogliarlo di persona ogni volta che apriamo.</p>
+  </div>
+  <div class="games-grid">
+    <div class="game-tile fade-up">
+      <span class="game-icon">♟️</span>
+      <h3>Giochi da Tavolo</h3>
+      <p>Eurogame, astratti, cooperativi, party game. Per tutti i gusti e tutte le età.</p>
+    </div>
+    <div class="game-tile fade-up">
+      <span class="game-icon">🐉</span>
+      <h3>Giochi di Ruolo</h3>
+      <p>D&D, Pathfinder, Cyberpunk, Ars Magica. Storie da raccontare insieme.</p>
+    </div>
+    <div class="game-tile fade-up">
+      <span class="game-icon">⚔️</span>
+      <h3>Wargame & Miniature</h3>
+      <p>Tavoli dedicati, scenari dipinti a mano, tornei mensili.</p>
+    </div>
+    <div class="game-tile fade-up">
+      <span class="game-icon">🃏</span>
+      <h3>Card Games</h3>
+      <p>Magic, Pokémon, Flesh & Blood e molti altri. Draft e tornei regolari.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">
+    <div class="nav-logo">Nexus <em>Ludico</em></div>
+    <p>Associazione culturale e ludica di Rivalta di Torino. Ospitiamo le nostre attività al Centro Giovani Comunale di Via Balegno 8.</p>
+  </div>
+  <div class="footer-col">
+    <h4>Dove siamo</h4>
+    <ul>
+      <li>Centro Giovani Comunale</li>
+      <li>Via Balegno 8</li>
+      <li>10040 Rivalta di Torino (TO)</li>
+      <li style="margin-top:12px"><a href="#">Instagram</a></li>
+      <li><a href="#">Facebook</a></li>
+    </ul>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <span>© 2025 Nexus Ludico APS — C.F. 12345678901</span>
+  <span>Privacy policy · Cookie · Statuto</span>
+</div>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>

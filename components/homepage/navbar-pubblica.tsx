@@ -1,21 +1,19 @@
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Lock } from 'lucide-react'
 
 export function NavbarPubblica() {
   return (
-    <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6">
-        <Link href="/" className="text-lg font-bold tracking-tight">
-          La Tavola Gioconda
-        </Link>
-        <Button asChild variant="outline" size="sm">
-          <Link href="/area-riservata" className="flex items-center gap-2">
-            <Lock className="h-3.5 w-3.5" />
-            Area riservata
-          </Link>
-        </Button>
-      </div>
-    </header>
+    <nav className="sticky top-0 z-40 flex items-center justify-between px-8 sm:px-16 py-5 bg-background border-b-2 border-foreground">
+      <img
+        src="/logotipo.svg"
+        alt="La Tavola Gioconda"
+        className="h-10 w-auto"
+      />
+      <Link
+        href="/area-riservata"
+        className="text-[0.85rem] tracking-[0.05em] px-6 py-2.5 border-2 border-foreground hover:bg-foreground hover:text-background transition-colors duration-200"
+      >
+        Area riservata
+      </Link>
+    </nav>
   )
 }

@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { AggiungiEventoDialog } from '@/components/eventi/aggiungi-evento-dialog'
 import { IscrizioneButton } from '@/components/eventi/iscrizione-button'
 import { EliminaEventoButton } from '@/components/eventi/elimina-evento-button'
+import { ModificaEventoDialog } from '@/components/eventi/modifica-evento-dialog'
 
 export const metadata: Metadata = {
   title: 'Eventi — La Tavola Gioconda',
@@ -143,7 +144,12 @@ export default async function EventiPage() {
                   iscritto={iscritto}
                   alCompleto={alCompleto && !iscritto}
                 />
-                {isAdmin && <EliminaEventoButton eventoId={evento.id} />}
+                {isAdmin && (
+                  <div className="flex items-center gap-2">
+                    <ModificaEventoDialog evento={evento} />
+                    <EliminaEventoButton eventoId={evento.id} />
+                  </div>
+                )}
               </div>
             </div>
           )

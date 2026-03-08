@@ -56,8 +56,8 @@ export function Navbar({ nome, cognome, ruolo, nickname, avatarSrc }: NavbarProp
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
 
           {/* Logo */}
-          <Link href="/" className="text-lg font-semibold hover:opacity-80 transition-opacity">
-            La Tavola Gioconda
+          <Link href="/" className="hover:opacity-80 transition-opacity">
+            <img src="/logotipo.svg" alt="La Tavola Gioconda" className="h-8 w-auto" />
           </Link>
 
           <div className="flex items-center gap-1">
