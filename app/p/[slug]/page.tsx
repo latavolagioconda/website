@@ -17,11 +17,12 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const supabase = await createClient()
-  const { data } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data } = (await (supabase as any)
     .from('vista_profili_pubblici')
     .select('nickname, nome, cognome')
     .eq('slug', slug)
-    .single() as { data: Pick<VistaProfiliPubblici, 'nickname' | 'nome' | 'cognome'> | null }
+    .single()) as { data: Pick<VistaProfiliPubblici, 'nickname' | 'nome' | 'cognome'> | null }
 
   if (!data) return { title: 'Profilo non trovato — La Tavola Gioconda' }
 
@@ -33,11 +34,12 @@ export default async function ProfiloPubblicoPage({ params }: Props) {
   const { slug } = await params
   const supabase = await createClient()
 
-  const { data: profilo } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: profilo } = (await (supabase as any)
     .from('vista_profili_pubblici')
     .select('*')
     .eq('slug', slug)
-    .single() as { data: VistaProfiliPubblici | null }
+    .single()) as { data: VistaProfiliPubblici | null }
 
   if (!profilo) notFound()
 
