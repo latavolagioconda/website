@@ -5,7 +5,12 @@
       "Bash(echo Spostamento completato:*)",
       "Bash(cd /c/Progetti/website && npm install @supabase/ssr @supabase/supabase-js 2>&1)",
       "Bash(cd /c/Progetti/website && npm run build 2>&1)",
-      "Bash(cd /c/Progetti/website && npx @next/codemod@canary middleware-to-proxy . 2>&1)"
+      "Bash(cd /c/Progetti/website && npx @next/codemod@canary middleware-to-proxy . 2>&1)",
+      "Bash(cd /c/Progetti/website && npx shadcn@latest add select --yes 2>&1)",
+      "Bash(node:*)",
+      "Bash(cd /c/Progetti/website && npx shadcn@latest add textarea --yes 2>&1)",
+      "Bash(cd /c/Progetti/website && npx shadcn@latest add skeleton --yes 2>&1)",
+      "Bash(cd /c/Progetti/website && git push 2>&1)"
     ]
   }
 }

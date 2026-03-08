@@ -114,6 +114,18 @@ export function AggiungiEventoDialog() {
             <Label htmlFor="luogo">Luogo</Label>
             <Input id="luogo" name="luogo" placeholder="Via Roma 1, Milano" />
           </div>
+          <div className="flex items-center gap-2">
+            <input
+              id="pubblico"
+              name="pubblico"
+              type="checkbox"
+              defaultChecked
+              className="h-4 w-4 rounded border-input accent-primary"
+            />
+            <Label htmlFor="pubblico" className="font-normal cursor-pointer">
+              Visibile sulla homepage pubblica
+            </Label>
+          </div>
           <div className="flex justify-end gap-2 pt-2">
             <Button
               type="button"

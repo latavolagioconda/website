@@ -4,7 +4,14 @@ import { revalidatePath } from 'next/cache'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
 
-export type StatoSocio = { errore?: string; successo?: boolean } | null
+function generaSlug(): string {
+  // Slug anonimo: 12 caratteri alfanumerici casuali, es. "a3k9mf2xq8tz"
+  return Array.from({ length: 12 }, () =>
+    Math.random().toString(36)[2]
+  ).join('')
+}
+
+export type StatoSocio = { errore?: string; successo?: boolean; slug?: string } | null
 
 async function verificaAdmin() {
   const supabase = await createClient()
@@ -68,6 +75,36 @@ export async function aggiungiSocio(
 
   revalidatePath('/soci')
   return { successo: true }
+}
+
+export async function gestisciProfiloPubblico(
+  socioId: string,
+  azione: 'genera' | 'rigenera' | 'toggle',
+  abilitatoCorrente?: boolean
+): Promise<StatoSocio> {
+  const admin_user = await verificaAdmin()
+  if (!admin_user) return { errore: 'Accesso non autorizzato.' }
+
+  const admin = createAdminClient()
+
+  if (azione === 'toggle') {
+    const { error } = await admin
+      .from('profili_pubblici')
+      .update({ abilitato: !abilitatoCorrente })
+      .eq('socio_id', socioId)
+    if (error) return { errore: "Errore durante l'aggiornamento." }
+    revalidatePath('/soci')
+    return { successo: true }
+  } else {
+    // genera o rigenera: upsert con nuovo slug
+    const slug = generaSlug()
+    const { error } = await admin
+      .from('profili_pubblici')
+      .upsert({ socio_id: socioId, slug, abilitato: true }, { onConflict: 'socio_id' })
+    if (error) return { errore: 'Errore durante la generazione del link.' }
+    revalidatePath('/soci')
+    return { successo: true, slug }
+  }
 }
 
 export async function toggleAttivoSocio(

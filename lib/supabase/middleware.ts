@@ -33,16 +33,17 @@ export async function updateSession(request: NextRequest) {
   // Route protette: reindirizza al login se non autenticato
   const isProtectedRoute = request.nextUrl.pathname.startsWith('/dashboard') ||
     request.nextUrl.pathname.startsWith('/eventi') ||
-    request.nextUrl.pathname.startsWith('/soci')
+    request.nextUrl.pathname.startsWith('/soci') ||
+    request.nextUrl.pathname.startsWith('/profilo')
 
   if (isProtectedRoute && !user) {
     const url = request.nextUrl.clone()
-    url.pathname = '/login'
+    url.pathname = '/area-riservata'
     return NextResponse.redirect(url)
   }
 
   // Se autenticato e sulla pagina di login, reindirizza alla dashboard
-  if (request.nextUrl.pathname === '/login' && user) {
+  if (request.nextUrl.pathname === '/area-riservata' && user) {
     const url = request.nextUrl.clone()
     url.pathname = '/dashboard'
     return NextResponse.redirect(url)

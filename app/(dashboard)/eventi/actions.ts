@@ -36,6 +36,7 @@ export async function creaEvento(
   const luogo = (formData.get('luogo') as string) || null
   const maxStr = formData.get('max_partecipanti') as string
   const max_partecipanti = maxStr ? parseInt(maxStr) : null
+  const pubblico = formData.get('pubblico') === 'on'
 
   const supabase = await createClient()
   const { error } = await supabase.from('eventi').insert({
@@ -46,12 +47,14 @@ export async function creaEvento(
     data_fine,
     luogo,
     max_partecipanti,
+    pubblico,
     creato_da: socio.id,
   })
 
   if (error) return { errore: "Errore durante la creazione dell'evento." }
 
   revalidatePath('/eventi')
+  revalidatePath('/')
   return { successo: true }
 }
 
@@ -65,6 +68,7 @@ export async function eliminaEvento(eventoId: string): Promise<StatoEvento> {
   if (error) return { errore: "Errore durante l'eliminazione." }
 
   revalidatePath('/eventi')
+  revalidatePath('/')
   return { successo: true }
 }
 

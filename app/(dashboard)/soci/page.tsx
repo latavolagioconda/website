@@ -12,6 +12,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { AggiungiSocioDialog } from '@/components/soci/aggiungi-socio-dialog'
 import { ToggleAttivoButton } from '@/components/soci/toggle-attivo-button'
+import { GestisciProfiloDialog } from '@/components/soci/gestisci-profilo-dialog'
 
 export const metadata: Metadata = {
   title: 'Soci — La Tavola Gioconda',
@@ -23,22 +24,21 @@ export default async function SociPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  if (!user) redirect('/area-riservata')
 
-  const [{ data: soci }, { data: socioCorrente }] = await Promise.all([
-    supabase
-      .from('soci')
-      .select('*')
-      .order('cognome', { ascending: true }),
-    supabase
-      .from('soci')
-      .select('ruolo')
-      .eq('auth_user_id', user.id)
-      .single(),
+  const [{ data: soci }, { data: socioCorrente }, { data: profili }] = await Promise.all([
+    supabase.from('soci').select('*').order('cognome', { ascending: true }),
+    supabase.from('soci').select('ruolo').eq('auth_user_id', user.id).single(),
+    supabase.from('profili_pubblici').select('socio_id, slug, abilitato'),
   ])
 
   // Pagina accessibile solo agli admin
   if (socioCorrente?.ruolo !== 'admin') redirect('/dashboard')
+
+  // Mappa socio_id → profilo per accesso rapido
+  const mapProfili = new Map(
+    (profili ?? []).map((p) => [p.socio_id, p])
+  )
 
   const totale = soci?.length ?? 0
   const attivi = soci?.filter((s) => s.attivo).length ?? 0
@@ -65,41 +65,47 @@ export default async function SociPage() {
               <TableHead>Ruolo</TableHead>
               <TableHead>Iscritto il</TableHead>
               <TableHead>Stato</TableHead>
-              <TableHead className="w-[100px]" />
+              <TableHead className="w-[110px] text-right">Azioni</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {soci?.map((socio) => (
-              <TableRow key={socio.id}>
-                <TableCell className="font-medium">
-                  {socio.cognome} {socio.nome}
-                </TableCell>
-                <TableCell className="text-muted-foreground">
-                  {socio.email}
-                </TableCell>
-                <TableCell>
-                  <Badge
-                    variant={socio.ruolo === 'admin' ? 'default' : 'secondary'}
-                  >
-                    {socio.ruolo}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-muted-foreground">
-                  {new Date(socio.data_iscrizione).toLocaleDateString('it-IT')}
-                </TableCell>
-                <TableCell>
-                  <Badge variant={socio.attivo ? 'outline' : 'destructive'}>
-                    {socio.attivo ? 'attivo' : 'disattivato'}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <ToggleAttivoButton
-                    socioId={socio.id}
-                    attivo={socio.attivo}
-                  />
-                </TableCell>
-              </TableRow>
-            ))}
+            {soci?.map((socio) => {
+              const profilo = mapProfili.get(socio.id) ?? null
+              return (
+                <TableRow key={socio.id}>
+                  <TableCell className="font-medium">
+                    {socio.cognome} {socio.nome}
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {socio.email}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={socio.ruolo === 'admin' ? 'default' : 'secondary'}>
+                      {socio.ruolo}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {new Date(socio.data_iscrizione).toLocaleDateString('it-IT')}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={socio.attivo ? 'outline' : 'destructive'}>
+                      {socio.attivo ? 'attivo' : 'disattivato'}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex items-center justify-end gap-1">
+                      <GestisciProfiloDialog
+                        socioId={socio.id}
+                        nome={socio.nome}
+                        cognome={socio.cognome}
+                        profilo={profilo}
+                      />
+                      <ToggleAttivoButton socioId={socio.id} attivo={socio.attivo} />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )
+            })}
             {(!soci || soci.length === 0) && (
               <TableRow>
                 <TableCell

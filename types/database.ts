@@ -24,6 +24,7 @@ export type Database = {
           id: string
           luogo: string | null
           max_partecipanti: number | null
+          pubblico: boolean
           tipo: string
           titolo: string
         }
@@ -36,6 +37,7 @@ export type Database = {
           id?: string
           luogo?: string | null
           max_partecipanti?: number | null
+          pubblico?: boolean
           tipo: string
           titolo: string
         }
@@ -48,6 +50,7 @@ export type Database = {
           id?: string
           luogo?: string | null
           max_partecipanti?: number | null
+          pubblico?: boolean
           tipo?: string
           titolo?: string
         }
@@ -97,45 +100,127 @@ export type Database = {
           },
         ]
       }
+      profili_pubblici: {
+        Row: {
+          abilitato: boolean
+          created_at: string
+          id: string
+          slug: string
+          socio_id: string
+        }
+        Insert: {
+          abilitato?: boolean
+          created_at?: string
+          id?: string
+          slug: string
+          socio_id: string
+        }
+        Update: {
+          abilitato?: boolean
+          created_at?: string
+          id?: string
+          slug?: string
+          socio_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profili_pubblici_socio_id_fkey"
+            columns: ["socio_id"]
+            isOneToOne: true
+            referencedRelation: "soci"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       soci: {
         Row: {
           attivo: boolean
           auth_user_id: string | null
+          avatar_url: string | null
+          bio: string | null
           cognome: string
           created_at: string
           data_iscrizione: string
+          data_nascita: string | null
           email: string
+          giochi_preferiti: string[] | null
           id: string
+          nickname: string | null
           nome: string
+          pubblica_bio: boolean
+          pubblica_data_nascita: boolean
+          pubblica_email: boolean
+          pubblica_giochi: boolean
+          pubblica_nome_completo: boolean
+          pubblica_telefono: boolean
           ruolo: string
+          telefono: string | null
         }
         Insert: {
           attivo?: boolean
           auth_user_id?: string | null
+          avatar_url?: string | null
+          bio?: string | null
           cognome: string
           created_at?: string
           data_iscrizione?: string
+          data_nascita?: string | null
           email: string
+          giochi_preferiti?: string[] | null
           id?: string
+          nickname?: string | null
           nome: string
+          pubblica_bio?: boolean
+          pubblica_data_nascita?: boolean
+          pubblica_email?: boolean
+          pubblica_giochi?: boolean
+          pubblica_nome_completo?: boolean
+          pubblica_telefono?: boolean
           ruolo?: string
+          telefono?: string | null
         }
         Update: {
           attivo?: boolean
           auth_user_id?: string | null
+          avatar_url?: string | null
+          bio?: string | null
           cognome?: string
           created_at?: string
           data_iscrizione?: string
+          data_nascita?: string | null
           email?: string
+          giochi_preferiti?: string[] | null
           id?: string
+          nickname?: string | null
           nome?: string
+          pubblica_bio?: boolean
+          pubblica_data_nascita?: boolean
+          pubblica_email?: boolean
+          pubblica_giochi?: boolean
+          pubblica_nome_completo?: boolean
+          pubblica_telefono?: boolean
           ruolo?: string
+          telefono?: string | null
         }
         Relationships: []
       }
     }
     Views: {
-      [_ in never]: never
+      vista_profili_pubblici: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          cognome: string | null
+          data_iscrizione: string
+          data_nascita: string | null
+          email: string | null
+          giochi_preferiti: string[] | null
+          nickname: string | null
+          nome: string | null
+          slug: string
+          telefono: string | null
+        }
+      }
     }
     Functions: {
       is_admin: { Args: never; Returns: boolean }

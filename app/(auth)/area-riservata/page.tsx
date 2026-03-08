@@ -2,10 +2,10 @@ import type { Metadata } from 'next'
 import { LoginForm } from '@/components/auth/login-form'
 
 export const metadata: Metadata = {
-  title: 'Accedi — La Tavola Gioconda',
+  title: 'Area Riservata — La Tavola Gioconda',
 }
 
-export default function LoginPage() {
+export default function AreaRiservataPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4">
       <div className="w-full max-w-sm">

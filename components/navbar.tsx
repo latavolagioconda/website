@@ -17,16 +17,19 @@ interface NavbarProps {
   nome: string
   cognome: string
   ruolo: string
+  nickname?: string | null
 }
 
-export function Navbar({ nome, cognome, ruolo }: NavbarProps) {
+export function Navbar({ nome, cognome, ruolo, nickname }: NavbarProps) {
   const pathname = usePathname()
 
   const iniziali = `${nome[0]}${cognome[0]}`.toUpperCase()
+  const nomeVisualizzato = nickname || `${nome} ${cognome}`
 
   const voci = [
     { href: '/dashboard', etichetta: 'Dashboard' },
     { href: '/eventi', etichetta: 'Eventi' },
+    { href: '/profilo', etichetta: 'Profilo' },
     ...(ruolo === 'admin' ? [{ href: '/soci', etichetta: 'Soci' }] : []),
   ]
 
@@ -34,7 +37,9 @@ export function Navbar({ nome, cognome, ruolo }: NavbarProps) {
     <header className="border-b bg-background">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
         <div className="flex items-center gap-8">
-          <span className="text-lg font-semibold">La Tavola Gioconda</span>
+          <Link href="/" className="text-lg font-semibold hover:opacity-80 transition-opacity">
+            La Tavola Gioconda
+          </Link>
           <nav className="hidden gap-1 sm:flex">
             {voci.map((voce) => (
               <Link
@@ -62,9 +67,12 @@ export function Navbar({ nome, cognome, ruolo }: NavbarProps) {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
             <div className="px-2 py-1.5">
-              <p className="text-sm font-medium">
-                {nome} {cognome}
-              </p>
+              <p className="text-sm font-medium">{nomeVisualizzato}</p>
+              {nickname && (
+                <p className="text-xs text-muted-foreground">
+                  {nome} {cognome}
+                </p>
+              )}
               <p className="text-xs text-muted-foreground capitalize">{ruolo}</p>
             </div>
             <DropdownMenuSeparator />
