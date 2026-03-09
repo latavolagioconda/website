@@ -71,29 +71,17 @@ export function AggiungiEventoDialog() {
               rows={3}
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="tipo">Tipo</Label>
-              <Select name="tipo" defaultValue="evento">
-                <SelectTrigger id="tipo">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="evento">Evento</SelectItem>
-                  <SelectItem value="torneo">Torneo</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="max_partecipanti">Max partecipanti</Label>
-              <Input
-                id="max_partecipanti"
-                name="max_partecipanti"
-                type="number"
-                min="1"
-                placeholder="Nessun limite"
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="tipo">Tipo</Label>
+            <Select name="tipo" defaultValue="evento">
+              <SelectTrigger id="tipo">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="evento">Evento</SelectItem>
+                <SelectItem value="torneo">Torneo</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">

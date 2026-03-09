@@ -5,9 +5,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import Link from 'next/link'
-import { Mail, Phone, Calendar, Gamepad2 } from 'lucide-react'
+import { Mail, Phone, Calendar, Gamepad2, ExternalLink } from 'lucide-react'
 import { gravatarUrl } from '@/lib/gravatar'
+import { Navbar } from '@/components/navbar'
 import type { VistaProfiliPubblici } from '@/types/database'
 
 interface Props {
@@ -54,16 +54,18 @@ export default async function ProfiloPubblicoPage({ params }: Props) {
   })
 
   const haContatti = profilo.email || profilo.telefono || profilo.data_nascita
+  const social = [
+    profilo.social_x        && { label: 'X',         url: `https://x.com/${profilo.social_x}`,                         handle: `@${profilo.social_x}` },
+    profilo.social_instagram && { label: 'Instagram', url: `https://instagram.com/${profilo.social_instagram}`,          handle: `@${profilo.social_instagram}` },
+    profilo.social_bluesky  && { label: 'Bluesky',   url: `https://bsky.app/profile/${profilo.social_bluesky}`,         handle: profilo.social_bluesky },
+    profilo.social_facebook && { label: 'Facebook',  url: `https://facebook.com/${profilo.social_facebook}`,            handle: profilo.social_facebook },
+    profilo.social_discord  && { label: 'Discord',   url: null,                                                           handle: profilo.social_discord },
+    profilo.social_steam    && { label: 'Steam',     url: `https://steamcommunity.com/id/${profilo.social_steam}`,        handle: profilo.social_steam },
+  ].filter(Boolean) as { label: string; url: string | null; handle: string }[]
 
   return (
     <div className="min-h-screen bg-muted/30 flex flex-col">
-      <header className="border-b bg-background py-3 px-4">
-        <div className="mx-auto max-w-lg">
-          <Link href="/" className="text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors">
-            La Tavola Gioconda
-          </Link>
-        </div>
-      </header>
+      <Navbar socio={null} />
 
       <main className="flex-1 flex items-start justify-center px-4 py-10">
         <div className="w-full max-w-lg space-y-6">
@@ -115,6 +117,38 @@ export default async function ProfiloPubblicoPage({ params }: Props) {
             </Card>
           )}
 
+          {/* Social */}
+          {social.length > 0 && (
+            <Card>
+              <CardContent className="pt-5 space-y-3">
+                {social.map((s, i) => (
+                  <div key={s.label}>
+                    {i > 0 && <Separator />}
+                    {s.url ? (
+                      <a
+                        href={s.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-between gap-3 text-sm hover:text-primary transition-colors"
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="text-xs font-medium text-muted-foreground w-16 shrink-0">{s.label}</span>
+                          <span>{s.handle}</span>
+                        </div>
+                        <ExternalLink className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                      </a>
+                    ) : (
+                      <div className="flex items-center gap-3 text-sm">
+                        <span className="text-xs font-medium text-muted-foreground w-16 shrink-0">{s.label}</span>
+                        <span>{s.handle}</span>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
+
           {/* Contatti */}
           {haContatti && (
             <Card>
@@ -159,8 +193,39 @@ export default async function ProfiloPubblicoPage({ params }: Props) {
         </div>
       </main>
 
-      <footer className="py-4 text-center text-xs text-muted-foreground border-t bg-background">
-        <Link href="/" className="hover:underline">La Tavola Gioconda</Link>
+      <footer className="bg-foreground text-background">
+        <div className="grid sm:grid-cols-2 gap-10 px-8 py-14 sm:px-16">
+          <div>
+            <img src="/logotipo-arancio.svg" alt="La Tavola Gioconda" className="h-10 w-auto mb-4" />
+            <p className="font-light text-sm leading-relaxed max-w-xs" style={{ opacity: 0.55 }}>
+              Associazione ludica di Rivalta di Torino. Siamo al Centro Giovani Comunale di Via Balegno 8.
+            </p>
+          </div>
+          <div>
+            <h4 className="text-[0.7rem] tracking-[0.15em] uppercase mb-5" style={{ color: '#D4A017' }}>
+              Dove siamo
+            </h4>
+            <ul className="font-light text-sm space-y-2.5" style={{ opacity: 0.6 }}>
+              <li>Centro Giovani Comunale</li>
+              <li>Via Balegno 8</li>
+              <li>10040 Rivalta di Torino (TO)</li>
+            </ul>
+          </div>
+        </div>
+        <div
+          className="flex flex-col sm:flex-row justify-between items-center gap-2 px-8 sm:px-16 py-5 text-[0.7rem] tracking-[0.08em]"
+          style={{ borderTop: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' }}
+        >
+          <span>© {new Date().getFullYear()} La Tavola Gioconda</span>
+          <div className="flex items-center gap-3">
+            <span>Rivalta di Torino</span>
+            <img
+              src="/stemma-rivalta.png"
+              alt="Stemma di Rivalta di Torino"
+              className="h-10 w-auto opacity-80"
+            />
+          </div>
+        </div>
       </footer>
     </div>
   )

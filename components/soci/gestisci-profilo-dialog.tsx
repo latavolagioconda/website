@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { gestisciProfiloPubblico } from '@/app/(dashboard)/soci/actions'
@@ -14,7 +14,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
-import { Globe, Copy, RefreshCw, Link2Off } from 'lucide-react'
+import { Globe, Copy, RefreshCw, Link2Off, Nfc, Loader2 } from 'lucide-react'
 
 interface GestisciProfiloDialogProps {
   socioId: string
@@ -38,6 +38,39 @@ export function GestisciProfiloDialog({
 
   const urlBase = typeof window !== 'undefined' ? window.location.origin : ''
   const urlPubblico = profilo ? `${urlBase}/p/${profilo.slug}` : null
+
+  const [nfcSupportato, setNfcSupportato] = useState(false)
+  const [scrivendoNfc, setScrivendoNfc] = useState(false)
+
+  useEffect(() => {
+    setNfcSupportato('NDEFReader' in window)
+  }, [])
+
+  async function scriviNfc() {
+    if (!urlPubblico) return
+    setScrivendoNfc(true)
+    try {
+      // NDEFReader non è ancora nei tipi standard di TypeScript
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const ndef = new (window as any).NDEFReader()
+      await ndef.write({ records: [{ recordType: 'url', data: urlPubblico }] })
+      toast.success('URL scritto sul tag NFC con successo.')
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        if (err.name === 'NotAllowedError') {
+          toast.error('Permesso NFC negato. Consenti l\'accesso NFC nelle impostazioni.')
+        } else if (err.name === 'NotSupportedError') {
+          toast.error('NFC non disponibile su questo dispositivo.')
+        } else {
+          toast.error(`Errore NFC: ${err.message}`)
+        }
+      } else {
+        toast.error('Errore durante la scrittura NFC.')
+      }
+    } finally {
+      setScrivendoNfc(false)
+    }
+  }
 
   function esegui(azione: 'genera' | 'rigenera' | 'toggle') {
     startTransition(async () => {
@@ -136,8 +169,25 @@ export function GestisciProfiloDialog({
                   </Button>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Usa questo URL per programmare il tag NFC sulla tessera.
+                  {nfcSupportato
+                    ? 'Avvicina il tag NFC al dispositivo e premi il pulsante per programmarlo.'
+                    : 'Usa questo URL per programmare il tag NFC sulla tessera.'}
                 </p>
+                {nfcSupportato && (
+                  <Button
+                    onClick={scriviNfc}
+                    disabled={scrivendoNfc || !profilo?.abilitato}
+                    className="w-full"
+                    title={!profilo?.abilitato ? 'Il profilo è disabilitato' : undefined}
+                  >
+                    {scrivendoNfc ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <Nfc className="mr-2 h-4 w-4" />
+                    )}
+                    {scrivendoNfc ? 'Avvicina il tag NFC…' : 'Scrivi su tag NFC'}
+                  </Button>
+                )}
               </div>
 
               {/* Azioni */}

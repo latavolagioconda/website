@@ -21,6 +21,7 @@ import {
   Menu,
   X,
   LogOut,
+  LogIn,
 } from 'lucide-react'
 
 interface SocioNavbar {
@@ -62,9 +63,11 @@ export function Navbar({ socio }: NavbarProps) {
         {!socio ? (
           <Link
             href="/area-riservata"
-            className="text-[0.85rem] tracking-[0.05em] px-6 py-2.5 border-2 border-foreground hover:bg-foreground hover:text-background transition-colors duration-200"
+            className="hover:bg-foreground hover:text-background transition-colors duration-200 border-2 border-foreground sm:text-[0.85rem] sm:tracking-[0.05em] sm:px-6 sm:py-2.5 p-2"
+            title="Area riservata"
           >
-            Area riservata
+            <LogIn className="h-5 w-5 sm:hidden" />
+            <span className="hidden sm:inline">Area riservata</span>
           </Link>
         ) : (
           <div className="flex items-center gap-1">

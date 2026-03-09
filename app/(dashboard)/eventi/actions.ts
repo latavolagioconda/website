@@ -34,8 +34,6 @@ export async function creaEvento(
   const data_inizio = formData.get('data_inizio') as string
   const data_fine = (formData.get('data_fine') as string) || null
   const luogo = (formData.get('luogo') as string) || null
-  const maxStr = formData.get('max_partecipanti') as string
-  const max_partecipanti = maxStr ? parseInt(maxStr) : null
   const pubblico = formData.get('pubblico') === 'on'
 
   const supabase = await createClient()
@@ -46,7 +44,6 @@ export async function creaEvento(
     data_inizio,
     data_fine,
     luogo,
-    max_partecipanti,
     pubblico,
     creato_da: socio.id,
   })
@@ -72,14 +69,12 @@ export async function modificaEvento(
   const data_inizio = formData.get('data_inizio') as string
   const data_fine = (formData.get('data_fine') as string) || null
   const luogo = (formData.get('luogo') as string) || null
-  const maxStr = formData.get('max_partecipanti') as string
-  const max_partecipanti = maxStr ? parseInt(maxStr) : null
   const pubblico = formData.get('pubblico') === 'on'
 
   const supabase = await createClient()
   const { error } = await supabase
     .from('eventi')
-    .update({ titolo, descrizione, tipo, data_inizio, data_fine, luogo, max_partecipanti, pubblico })
+    .update({ titolo, descrizione, tipo, data_inizio, data_fine, luogo, pubblico })
     .eq('id', id)
 
   if (error) return { errore: "Errore durante la modifica dell'evento." }
@@ -103,52 +98,3 @@ export async function eliminaEvento(eventoId: string): Promise<StatoEvento> {
   return { successo: true }
 }
 
-export async function togglIscrizione(
-  eventoId: string,
-  iscritto: boolean
-): Promise<StatoEvento> {
-  const socio = await getSocioCorrente()
-  if (!socio) return { errore: 'Non autenticato.' }
-
-  const supabase = await createClient()
-
-  if (iscritto) {
-    const { error } = await supabase
-      .from('partecipazioni')
-      .delete()
-      .eq('evento_id', eventoId)
-      .eq('socio_id', socio.id)
-
-    if (error) return { errore: 'Errore durante la disiscrizione.' }
-  } else {
-    // Verifica limite posti disponibili
-    const { count } = await supabase
-      .from('partecipazioni')
-      .select('*', { count: 'exact', head: true })
-      .eq('evento_id', eventoId)
-
-    const { data: evento } = await supabase
-      .from('eventi')
-      .select('max_partecipanti')
-      .eq('id', eventoId)
-      .single()
-
-    if (
-      evento?.max_partecipanti &&
-      count !== null &&
-      count >= evento.max_partecipanti
-    ) {
-      return { errore: 'Evento al completo.' }
-    }
-
-    const { error } = await supabase.from('partecipazioni').insert({
-      evento_id: eventoId,
-      socio_id: socio.id,
-    })
-
-    if (error) return { errore: "Errore durante l'iscrizione." }
-  }
-
-  revalidatePath('/eventi')
-  return { successo: true }
-}

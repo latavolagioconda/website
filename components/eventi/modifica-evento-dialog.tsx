@@ -31,7 +31,6 @@ type Evento = {
   data_inizio: string
   data_fine: string | null
   luogo: string | null
-  max_partecipanti: number | null
   pubblico: boolean
 }
 
@@ -90,30 +89,17 @@ export function ModificaEventoDialog({ evento }: { evento: Evento }) {
               defaultValue={evento.descrizione ?? ''}
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="tipo">Tipo</Label>
-              <Select name="tipo" defaultValue={evento.tipo}>
-                <SelectTrigger id="tipo">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="evento">Evento</SelectItem>
-                  <SelectItem value="torneo">Torneo</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="max_partecipanti">Max partecipanti</Label>
-              <Input
-                id="max_partecipanti"
-                name="max_partecipanti"
-                type="number"
-                min="1"
-                placeholder="Nessun limite"
-                defaultValue={evento.max_partecipanti ?? ''}
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="tipo">Tipo</Label>
+            <Select name="tipo" defaultValue={evento.tipo}>
+              <SelectTrigger id="tipo">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="evento">Evento</SelectItem>
+                <SelectItem value="torneo">Torneo</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">

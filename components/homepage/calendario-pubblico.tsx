@@ -2,7 +2,7 @@ import { Tables } from '@/types/database'
 
 type Evento = Pick<
   Tables<'eventi'>,
-  'id' | 'titolo' | 'descrizione' | 'tipo' | 'data_inizio' | 'data_fine' | 'luogo' | 'max_partecipanti'
+  'id' | 'titolo' | 'descrizione' | 'tipo' | 'data_inizio' | 'data_fine' | 'luogo'
 >
 
 function formatData(iso: string): string {
@@ -34,10 +34,9 @@ function CardEvento({ evento }: { evento: Evento }) {
           {evento.descrizione}
         </p>
       )}
-      {(evento.luogo || evento.max_partecipanti) && (
+      {evento.luogo && (
         <div className="mt-3 flex flex-wrap gap-3 text-xs opacity-50">
-          {evento.luogo && <span>{evento.luogo}</span>}
-          {evento.max_partecipanti && <span>Max {evento.max_partecipanti}</span>}
+          <span>{evento.luogo}</span>
         </div>
       )}
     </div>

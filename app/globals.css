@@ -163,7 +163,7 @@
 }
 .event-card-editorial:hover { background: var(--color-foreground); color: var(--color-background); }
 .event-card-editorial .ec-date { color: var(--color-muted-foreground); transition: color 0.25s; }
-.event-card-editorial:hover .ec-date { color: rgba(0,0,0,0.35); }
+.event-card-editorial:hover .ec-date { color: rgba(255,255,255,0.5); }
 .event-card-editorial .ec-tag { color: var(--color-primary); transition: color 0.25s; }
 .event-card-editorial:hover .ec-tag { color: #D4A017; }
 .event-card-editorial .ec-arrow { position: absolute; bottom: 28px; right: 28px; font-size: 1.3rem; color: var(--color-muted); transition: color 0.25s; }

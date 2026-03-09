@@ -1,10 +1,9 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
-import { CalendarDays, MapPin, Users } from 'lucide-react'
+import { CalendarDays, MapPin } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Badge } from '@/components/ui/badge'
 import { AggiungiEventoDialog } from '@/components/eventi/aggiungi-evento-dialog'
-import { IscrizioneButton } from '@/components/eventi/iscrizione-button'
 import { EliminaEventoButton } from '@/components/eventi/elimina-evento-button'
 import { ModificaEventoDialog } from '@/components/eventi/modifica-evento-dialog'
 
@@ -20,13 +19,12 @@ export default async function EventiPage() {
   } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const [{ data: eventi }, { data: tuttePartecipazioni }, { data: socioCorrente }] =
+  const [{ data: eventi }, { data: socioCorrente }] =
     await Promise.all([
       supabase
         .from('eventi')
         .select('*')
         .order('data_inizio', { ascending: true }),
-      supabase.from('partecipazioni').select('evento_id, socio_id'),
       supabase
         .from('soci')
         .select('id, ruolo')
@@ -37,23 +35,6 @@ export default async function EventiPage() {
   if (!socioCorrente) redirect('/login')
 
   const isAdmin = socioCorrente.ruolo === 'admin'
-
-  // Numero di partecipanti per ogni evento
-  const conteggioPartecipanti =
-    tuttePartecipazioni?.reduce(
-      (acc, p) => {
-        acc[p.evento_id] = (acc[p.evento_id] || 0) + 1
-        return acc
-      },
-      {} as Record<string, number>
-    ) ?? {}
-
-  // Iscrizioni del socio corrente
-  const mieIscrizioni = new Set(
-    tuttePartecipazioni
-      ?.filter((p) => p.socio_id === socioCorrente.id)
-      .map((p) => p.evento_id) ?? []
-  )
 
   return (
     <div className="space-y-6">
@@ -76,12 +57,6 @@ export default async function EventiPage() {
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {eventi?.map((evento) => {
-          const nPartecipanti = conteggioPartecipanti[evento.id] ?? 0
-          const iscritto = mieIscrizioni.has(evento.id)
-          const alCompleto =
-            evento.max_partecipanti !== null &&
-            nPartecipanti >= evento.max_partecipanti
-
           return (
             <div
               key={evento.id}
@@ -126,31 +101,14 @@ export default async function EventiPage() {
                     <span>{evento.luogo}</span>
                   </div>
                 )}
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4 shrink-0" />
-                  <span>
-                    {nPartecipanti}
-                    {evento.max_partecipanti
-                      ? ` / ${evento.max_partecipanti}`
-                      : ''}{' '}
-                    partecipanti
-                  </span>
-                </div>
               </div>
 
-              <div className="mt-auto flex items-center justify-between gap-2">
-                <IscrizioneButton
-                  eventoId={evento.id}
-                  iscritto={iscritto}
-                  alCompleto={alCompleto && !iscritto}
-                />
-                {isAdmin && (
-                  <div className="flex items-center gap-2">
-                    <ModificaEventoDialog evento={evento} />
-                    <EliminaEventoButton eventoId={evento.id} />
-                  </div>
-                )}
-              </div>
+              {isAdmin && (
+                <div className="mt-auto flex items-center justify-end gap-2">
+                  <ModificaEventoDialog evento={evento} />
+                  <EliminaEventoButton eventoId={evento.id} />
+                </div>
+              )}
             </div>
           )
         })}

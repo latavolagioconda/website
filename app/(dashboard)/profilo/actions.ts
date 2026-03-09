@@ -20,6 +20,12 @@ export async function aggiornaProfilo(
   const telefono = (formData.get('telefono') as string) || null
   const avatar_url = (formData.get('avatar_url') as string) || null
   const data_nascita = (formData.get('data_nascita') as string) || null
+  const social_x = (formData.get('social_x') as string) || null
+  const social_instagram = (formData.get('social_instagram') as string) || null
+  const social_bluesky = (formData.get('social_bluesky') as string) || null
+  const social_facebook = (formData.get('social_facebook') as string) || null
+  const social_discord = (formData.get('social_discord') as string) || null
+  const social_steam = (formData.get('social_steam') as string) || null
 
   const giochiStr = (formData.get('giochi_preferiti') as string) || ''
   const giochi_preferiti = giochiStr
@@ -48,6 +54,12 @@ export async function aggiornaProfilo(
       pubblica_email,
       pubblica_telefono,
       pubblica_data_nascita,
+      social_x,
+      social_instagram,
+      social_bluesky,
+      social_facebook,
+      social_discord,
+      social_steam,
     })
     .eq('auth_user_id', user.id)
 

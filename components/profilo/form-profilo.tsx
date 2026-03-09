@@ -16,6 +16,8 @@ type Socio = Pick<
   | 'bio' | 'telefono' | 'avatar_url' | 'data_nascita' | 'giochi_preferiti'
   | 'pubblica_nome_completo' | 'pubblica_bio' | 'pubblica_giochi'
   | 'pubblica_email' | 'pubblica_telefono' | 'pubblica_data_nascita'
+  | 'social_x' | 'social_instagram' | 'social_bluesky' | 'social_facebook'
+  | 'social_discord' | 'social_steam'
 >
 
 function TogglePrivacy({
@@ -222,6 +224,74 @@ export function FormProfilo({ socio }: { socio: Socio }) {
             defaultValue={socio.data_nascita ?? ''}
           />
         </RigaConPrivacy>
+      </div>
+
+      <Separator />
+
+      {/* Social */}
+      <div className="space-y-4">
+        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+          Social
+        </h2>
+        <p className="text-xs text-muted-foreground -mt-2">
+          Inserisci solo lo username (es. <code>mario_rossi</code>), senza @ né URL. Sempre visibili nel profilo pubblico se impostati.
+        </p>
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="social_x">X (Twitter)</Label>
+            <Input
+              id="social_x"
+              name="social_x"
+              defaultValue={socio.social_x ?? ''}
+              placeholder="username"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="social_instagram">Instagram</Label>
+            <Input
+              id="social_instagram"
+              name="social_instagram"
+              defaultValue={socio.social_instagram ?? ''}
+              placeholder="username"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="social_bluesky">Bluesky</Label>
+            <Input
+              id="social_bluesky"
+              name="social_bluesky"
+              defaultValue={socio.social_bluesky ?? ''}
+              placeholder="username.bsky.social"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="social_facebook">Facebook</Label>
+            <Input
+              id="social_facebook"
+              name="social_facebook"
+              defaultValue={socio.social_facebook ?? ''}
+              placeholder="username o nome pagina"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="social_discord">Discord</Label>
+            <Input
+              id="social_discord"
+              name="social_discord"
+              defaultValue={socio.social_discord ?? ''}
+              placeholder="username"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="social_steam">Steam</Label>
+            <Input
+              id="social_steam"
+              name="social_steam"
+              defaultValue={socio.social_steam ?? ''}
+              placeholder="username"
+            />
+          </div>
+        </div>
       </div>
 
       <div className="flex justify-end pt-2">

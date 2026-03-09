@@ -16,7 +16,7 @@ export default async function HomePage() {
     supabase.auth.getUser(),
     supabase
       .from('eventi')
-      .select('id, titolo, descrizione, tipo, data_inizio, data_fine, luogo, max_partecipanti')
+      .select('id, titolo, descrizione, tipo, data_inizio, data_fine, luogo')
       .eq('pubblico', true)
       .gte('data_inizio', new Date().toISOString())
       .order('data_inizio', { ascending: true })
@@ -195,14 +195,9 @@ export default async function HomePage() {
       <footer className="bg-foreground text-background">
         <div className="grid sm:grid-cols-2 gap-10 px-8 py-14 sm:px-16">
           <div>
-            <div
-              className="font-black mb-4"
-              style={{ fontSize: '1.6rem' }}
-            >
-              La Tavola <em className="text-primary">Gioconda</em>
-            </div>
+            <img src="/logotipo-arancio.svg" alt="La Tavola Gioconda" className="h-10 w-auto mb-4" />
             <p className="font-light text-sm leading-relaxed max-w-xs" style={{ opacity: 0.55 }}>
-              Associazione ludica di Rivalta di Torino. Siamo al Centro Giovani Comunale di Via Balegno 8.
+              Associazione ludica di Rivalta di Torino.
             </p>
           </div>
           <div>

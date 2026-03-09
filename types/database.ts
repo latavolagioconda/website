@@ -154,6 +154,12 @@ export type Database = {
           pubblica_nome_completo: boolean
           pubblica_telefono: boolean
           ruolo: string
+          social_bluesky: string | null
+          social_discord: string | null
+          social_facebook: string | null
+          social_instagram: string | null
+          social_steam: string | null
+          social_x: string | null
           telefono: string | null
         }
         Insert: {
@@ -177,6 +183,12 @@ export type Database = {
           pubblica_nome_completo?: boolean
           pubblica_telefono?: boolean
           ruolo?: string
+          social_bluesky?: string | null
+          social_discord?: string | null
+          social_facebook?: string | null
+          social_instagram?: string | null
+          social_steam?: string | null
+          social_x?: string | null
           telefono?: string | null
         }
         Update: {
@@ -200,6 +212,12 @@ export type Database = {
           pubblica_nome_completo?: boolean
           pubblica_telefono?: boolean
           ruolo?: string
+          social_bluesky?: string | null
+          social_discord?: string | null
+          social_facebook?: string | null
+          social_instagram?: string | null
+          social_steam?: string | null
+          social_x?: string | null
           telefono?: string | null
         }
         Relationships: []
@@ -356,4 +374,10 @@ export interface VistaProfiliPubblici {
   email: string | null
   telefono: string | null
   data_nascita: string | null
+  social_x: string | null
+  social_instagram: string | null
+  social_bluesky: string | null
+  social_facebook: string | null
+  social_discord: string | null
+  social_steam: string | null
 }
