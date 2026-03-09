@@ -40,13 +40,23 @@ export async function aggiungiSocio(
   const cognome = formData.get('cognome') as string
   const email = formData.get('email') as string
   const ruolo = formData.get('ruolo') as string
+  const password = formData.get('password') as string
+  const confermaPassword = formData.get('conferma_password') as string
+
+  if (!password || password.length < 8) {
+    return { errore: 'La password deve essere di almeno 8 caratteri.' }
+  }
+  if (password !== confermaPassword) {
+    return { errore: 'Le password non coincidono.' }
+  }
 
   const admin = createAdminClient()
 
-  // Crea l'utente su Supabase Auth e invia email per impostare la password
+  // Crea l'utente su Supabase Auth con password temporanea
   const { data: nuovoUtente, error: erroreAuth } =
     await admin.auth.admin.createUser({
       email,
+      password,
       email_confirm: true,
       user_metadata: { nome, cognome, ruolo },
     })
@@ -146,6 +156,36 @@ export async function aggiornaSocio(
   }
 
   revalidatePath('/soci')
+  return { successo: true }
+}
+
+export async function resetPasswordSocio(
+  socioId: string,
+  nuovaPassword: string
+): Promise<StatoSocio> {
+  const admin_user = await verificaAdmin()
+  if (!admin_user) return { errore: 'Accesso non autorizzato.' }
+
+  if (!nuovaPassword || nuovaPassword.length < 8) {
+    return { errore: 'La password deve essere di almeno 8 caratteri.' }
+  }
+
+  const admin = createAdminClient()
+
+  const { data: socio } = await admin
+    .from('soci')
+    .select('auth_user_id')
+    .eq('id', socioId)
+    .single()
+
+  if (!socio?.auth_user_id) return { errore: 'Socio non trovato.' }
+
+  const { error } = await admin.auth.admin.updateUserById(socio.auth_user_id, {
+    password: nuovaPassword,
+  })
+
+  if (error) return { errore: 'Errore durante il reset della password.' }
+
   return { successo: true }
 }
 

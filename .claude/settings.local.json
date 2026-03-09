@@ -12,7 +12,9 @@
       "Bash(cd /c/Progetti/website && npx shadcn@latest add skeleton --yes 2>&1)",
       "Bash(cd /c/Progetti/website && git push 2>&1)",
       "WebSearch",
-      "WebFetch(domain:it.wikipedia.org)"
+      "WebFetch(domain:it.wikipedia.org)",
+      "Bash(grep:*)",
+      "Bash(npm run:*)"
     ]
   }
 }

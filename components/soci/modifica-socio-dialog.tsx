@@ -3,7 +3,7 @@
 import { useState, useTransition, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { aggiornaSocio } from '@/app/(dashboard)/soci/actions'
+import { aggiornaSocio, resetPasswordSocio } from '@/app/(dashboard)/soci/actions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -25,7 +25,7 @@ import {
 } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { Pencil, X, Plus, Award } from 'lucide-react'
+import { Pencil, X, Plus, Award, KeyRound } from 'lucide-react'
 
 const BADGE_SUGGERITI = [
   'Fondatore',
@@ -65,6 +65,8 @@ export function ModificaSocioDialog({
   const [badge, setBadge] = useState<string[]>(badgeIniziali)
   const [nuovoBadge, setNuovoBadge] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
+  const [nuovaPassword, setNuovaPassword] = useState('')
+  const [pendingPassword, startTransitionPassword] = useTransition()
 
   function aggiungiBadge(testo: string) {
     const pulito = testo.trim()
@@ -109,12 +111,29 @@ export function ModificaSocioDialog({
     })
   }
 
+  function reimpostaPassword() {
+    if (!nuovaPassword || nuovaPassword.length < 8) {
+      toast.error('La password deve essere di almeno 8 caratteri.')
+      return
+    }
+    startTransitionPassword(async () => {
+      const risultato = await resetPasswordSocio(socioId, nuovaPassword)
+      if (risultato?.errore) {
+        toast.error(risultato.errore)
+        return
+      }
+      toast.success('Password aggiornata.')
+      setNuovaPassword('')
+    })
+  }
+
   // Reimposta i valori all'apertura del dialog
   function handleOpenChange(open: boolean) {
     if (open) {
       setCampi({ nome, cognome, email, ruolo, dataIscrizione })
       setBadge(badgeIniziali)
       setNuovoBadge('')
+      setNuovaPassword('')
     }
     setAperto(open)
   }
@@ -258,6 +277,37 @@ export function ModificaSocioDialog({
                 ))}
               </div>
             )}
+          </div>
+
+          <Separator />
+
+          {/* Reset password */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-sm font-medium">
+              <KeyRound className="h-4 w-4 text-muted-foreground" />
+              Reimposta password
+            </div>
+            <div className="flex gap-2">
+              <Input
+                type="password"
+                value={nuovaPassword}
+                onChange={(e) => setNuovaPassword(e.target.value)}
+                placeholder="Nuova password (min. 8 caratteri)"
+                autoComplete="new-password"
+                className="flex-1"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={reimpostaPassword}
+                disabled={pendingPassword || !nuovaPassword}
+              >
+                {pendingPassword ? 'Salvataggio…' : 'Imposta'}
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Comunica la nuova password al socio. Potrà cambiarla dal proprio profilo.
+            </p>
           </div>
         </div>
 

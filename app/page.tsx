@@ -10,7 +10,9 @@ export const metadata: Metadata = {
 }
 
 export default async function HomePage() {
+  console.log('[HomePage] inizio render')
   const supabase = await createClient()
+  console.log('[HomePage] client creato')
 
   const [{ data: { user } }, { data: eventi }] = await Promise.all([
     supabase.auth.getUser(),
@@ -23,15 +25,19 @@ export default async function HomePage() {
       .limit(9),
   ])
 
+  console.log('[HomePage] query ok, user:', user?.id ?? 'anonimo', 'eventi:', eventi?.length)
+
   let socio = null
   if (user) {
-    const { data } = await supabase
+    const { data, error: errSocio } = await supabase
       .from('soci')
       .select('nome, cognome, ruolo, nickname, avatar_url, email')
       .eq('auth_user_id', user.id)
       .single()
+    if (errSocio) console.error('[HomePage] errore query socio:', errSocio)
     socio = data
   }
+  console.log('[HomePage] socio:', socio?.nome ?? 'null')
 
   const tickerBase =
     '🎲 Associazione Ludica dal 2009 \u00a0\u00a0✦\u00a0\u00a0 ' +

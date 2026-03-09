@@ -48,8 +48,8 @@ export function AggiungiSocioDialog() {
         <DialogHeader>
           <DialogTitle>Nuovo socio</DialogTitle>
           <DialogDescription>
-            Crea un account per il nuovo socio. Riceverà un&apos;email per
-            impostare la password.
+            Crea un account per il nuovo socio. Imposta una password temporanea
+            da comunicare al socio, che potrà cambiarla dal proprio profilo.
           </DialogDescription>
         </DialogHeader>
         <form action={azione} className="space-y-4 pt-2">
@@ -89,6 +89,30 @@ export function AggiungiSocioDialog() {
                 <SelectItem value="admin">Admin</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="password">Password temporanea</Label>
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              required
+              minLength={8}
+              placeholder="Minimo 8 caratteri"
+              autoComplete="new-password"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="conferma_password">Conferma password</Label>
+            <Input
+              id="conferma_password"
+              name="conferma_password"
+              type="password"
+              required
+              minLength={8}
+              placeholder="Ripeti la password"
+              autoComplete="new-password"
+            />
           </div>
           <div className="flex justify-end gap-2 pt-2">
             <Button

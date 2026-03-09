@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { FormProfilo } from '@/components/profilo/form-profilo'
+import { FormCambiaPassword } from '@/components/profilo/form-cambia-password'
 import { gravatarUrl } from '@/lib/gravatar'
 import { Award } from 'lucide-react'
 
@@ -78,6 +79,18 @@ export default async function ProfiloPage() {
           rendere visibili nel profilo pubblico (link NFC sulla tessera).
         </p>
         <FormProfilo socio={socio} />
+      </div>
+
+      <Separator />
+
+      <div>
+        <h2 className="text-lg font-semibold mb-1">Sicurezza</h2>
+        <p className="text-sm text-muted-foreground mb-6">
+          Cambia la tua password di accesso.
+        </p>
+        <div className="max-w-sm">
+          <FormCambiaPassword />
+        </div>
       </div>
     </div>
   )

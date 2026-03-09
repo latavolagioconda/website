@@ -68,3 +68,30 @@ export async function aggiornaProfilo(
   revalidatePath('/profilo')
   return { successo: true }
 }
+
+export async function cambiaPassword(
+  prevState: StatoProfilo,
+  formData: FormData
+): Promise<StatoProfilo> {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) return { errore: 'Non autenticato.' }
+
+  const nuovaPassword = formData.get('nuova_password') as string
+  const confermaPassword = formData.get('conferma_password') as string
+
+  if (!nuovaPassword || nuovaPassword.length < 8) {
+    return { errore: 'La password deve essere di almeno 8 caratteri.' }
+  }
+  if (nuovaPassword !== confermaPassword) {
+    return { errore: 'Le password non coincidono.' }
+  }
+
+  const { error } = await supabase.auth.updateUser({ password: nuovaPassword })
+
+  if (error) return { errore: 'Errore durante il cambio password. Riprova.' }
+
+  return { successo: true }
+}
