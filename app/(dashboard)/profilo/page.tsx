@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { FormProfilo } from '@/components/profilo/form-profilo'
 import { gravatarUrl } from '@/lib/gravatar'
+import { Award } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Il mio profilo — La Tavola Gioconda',
@@ -22,7 +23,7 @@ export default async function ProfiloPage() {
   const { data: socio } = await supabase
     .from('soci')
     .select(
-      'nome, cognome, nickname, email, ruolo, data_iscrizione, bio, telefono, avatar_url, data_nascita, giochi_preferiti, pubblica_nome_completo, pubblica_bio, pubblica_giochi, pubblica_email, pubblica_telefono, pubblica_data_nascita, social_x, social_instagram, social_bluesky, social_facebook, social_discord, social_steam'
+      'nome, cognome, nickname, email, ruolo, data_iscrizione, bio, telefono, avatar_url, data_nascita, giochi_preferiti, badge, pubblica_nome_completo, pubblica_bio, pubblica_giochi, pubblica_email, pubblica_telefono, pubblica_data_nascita, social_x, social_instagram, social_bluesky, social_facebook, social_discord, social_steam'
     )
     .eq('auth_user_id', user.id)
     .single()
@@ -53,10 +54,16 @@ export default async function ProfiloPage() {
               {socio.nome} {socio.cognome}
             </p>
           )}
-          <div className="flex items-center gap-2 mt-1">
+          <div className="flex flex-wrap items-center gap-2 mt-1">
             <Badge variant={socio.ruolo === 'admin' ? 'default' : 'secondary'}>
               {socio.ruolo}
             </Badge>
+            {socio.badge && socio.badge.map((b) => (
+              <Badge key={b} variant="outline" className="gap-1">
+                <Award className="h-3 w-3" />
+                {b}
+              </Badge>
+            ))}
             <span className="text-sm text-muted-foreground">Socio dal {dataIscrizione}</span>
           </div>
         </div>

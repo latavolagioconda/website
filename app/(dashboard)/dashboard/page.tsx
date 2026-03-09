@@ -33,12 +33,6 @@ export default async function DashboardPage() {
           <p className="text-sm text-muted-foreground">Soci attivi</p>
           <p className="mt-1 text-3xl font-bold">{contatoreSoci ?? 0}</p>
         </div>
-        <div className="rounded-lg border bg-card p-6">
-          <p className="text-sm text-muted-foreground">Prossimi eventi</p>
-          <p className="mt-1 text-3xl font-bold">
-            {prossimiEventi?.length ?? 0}
-          </p>
-        </div>
       </div>
 
       {prossimiEventi && prossimiEventi.length > 0 && (

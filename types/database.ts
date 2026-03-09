@@ -137,6 +137,7 @@ export type Database = {
           attivo: boolean
           auth_user_id: string | null
           avatar_url: string | null
+          badge: string[]
           bio: string | null
           cognome: string
           created_at: string
@@ -166,6 +167,7 @@ export type Database = {
           attivo?: boolean
           auth_user_id?: string | null
           avatar_url?: string | null
+          badge?: string[]
           bio?: string | null
           cognome: string
           created_at?: string
@@ -195,6 +197,7 @@ export type Database = {
           attivo?: boolean
           auth_user_id?: string | null
           avatar_url?: string | null
+          badge?: string[]
           bio?: string | null
           cognome?: string
           created_at?: string
@@ -380,4 +383,5 @@ export interface VistaProfiliPubblici {
   social_facebook: string | null
   social_discord: string | null
   social_steam: string | null
+  badge: string[]
 }

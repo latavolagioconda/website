@@ -107,6 +107,25 @@ export async function gestisciProfiloPubblico(
   }
 }
 
+export async function aggiornaBadgeSocio(
+  socioId: string,
+  badge: string[]
+): Promise<StatoSocio> {
+  const admin_user = await verificaAdmin()
+  if (!admin_user) return { errore: 'Accesso non autorizzato.' }
+
+  const admin = createAdminClient()
+  const { error } = await admin
+    .from('soci')
+    .update({ badge })
+    .eq('id', socioId)
+
+  if (error) return { errore: "Errore durante l'aggiornamento dei badge." }
+
+  revalidatePath('/soci')
+  return { successo: true }
+}
+
 export async function toggleAttivoSocio(
   socioId: string,
   attivoCorrente: boolean

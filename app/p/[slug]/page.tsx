@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { Mail, Phone, Calendar, Gamepad2, ExternalLink } from 'lucide-react'
+import { Mail, Phone, Calendar, Gamepad2, ExternalLink, Award } from 'lucide-react'
 import { gravatarUrl } from '@/lib/gravatar'
 import { Navbar } from '@/components/navbar'
 import type { VistaProfiliPubblici } from '@/types/database'
@@ -90,6 +90,18 @@ export default async function ProfiloPubblicoPage({ params }: Props) {
               <p className="text-sm text-muted-foreground mt-1">Socio dal {dataIscrizione}</p>
             </div>
           </div>
+
+          {/* Badge */}
+          {profilo.badge && profilo.badge.length > 0 && (
+            <div className="flex flex-wrap justify-center gap-2">
+              {profilo.badge.map((b) => (
+                <Badge key={b} variant="outline" className="gap-1 px-3 py-1 text-sm">
+                  <Award className="h-3.5 w-3.5" />
+                  {b}
+                </Badge>
+              ))}
+            </div>
+          )}
 
           {/* Bio */}
           {profilo.bio && (

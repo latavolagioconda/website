@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge'
 import { AggiungiSocioDialog } from '@/components/soci/aggiungi-socio-dialog'
 import { ToggleAttivoButton } from '@/components/soci/toggle-attivo-button'
 import { GestisciProfiloDialog } from '@/components/soci/gestisci-profilo-dialog'
+import { ModificaSocioDialog } from '@/components/soci/modifica-socio-dialog'
 
 export const metadata: Metadata = {
   title: 'Soci — La Tavola Gioconda',
@@ -65,7 +66,7 @@ export default async function SociPage() {
               <TableHead>Ruolo</TableHead>
               <TableHead>Iscritto il</TableHead>
               <TableHead>Stato</TableHead>
-              <TableHead className="w-[110px] text-right">Azioni</TableHead>
+              <TableHead className="w-[140px] text-right">Azioni</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -94,6 +95,12 @@ export default async function SociPage() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-1">
+                      <ModificaSocioDialog
+                        socioId={socio.id}
+                        nome={socio.nome}
+                        cognome={socio.cognome}
+                        badgeIniziali={socio.badge ?? []}
+                      />
                       <GestisciProfiloDialog
                         socioId={socio.id}
                         nome={socio.nome}
