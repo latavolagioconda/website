@@ -101,7 +101,7 @@ export default async function HomePage() {
         {/* Right: dark panel with D20 */}
         <div className="relative bg-foreground flex items-center justify-center min-h-[340px] sm:min-h-0">
           <div
-            className="absolute inset-0 opacity-[0.04]"
+            className="absolute inset-0 opacity-[0.20]"
             style={{
               backgroundImage:
                 'linear-gradient(oklch(0.93 0.013 80) 1px, transparent 1px), linear-gradient(90deg, oklch(0.93 0.013 80) 1px, transparent 1px)',

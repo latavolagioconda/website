@@ -107,20 +107,43 @@ export async function gestisciProfiloPubblico(
   }
 }
 
-export async function aggiornaBadgeSocio(
+export async function aggiornaSocio(
   socioId: string,
-  badge: string[]
+  dati: {
+    nome: string
+    cognome: string
+    email: string
+    ruolo: string
+    data_iscrizione: string
+    badge: string[]
+  }
 ): Promise<StatoSocio> {
   const admin_user = await verificaAdmin()
   if (!admin_user) return { errore: 'Accesso non autorizzato.' }
 
   const admin = createAdminClient()
+
+  // Recupera il socio per ottenere auth_user_id e email attuale
+  const { data: socioAttuale } = await admin
+    .from('soci')
+    .select('auth_user_id, email')
+    .eq('id', socioId)
+    .single()
+
+  // Aggiorna la tabella soci
   const { error } = await admin
     .from('soci')
-    .update({ badge })
+    .update(dati)
     .eq('id', socioId)
 
-  if (error) return { errore: "Errore durante l'aggiornamento dei badge." }
+  if (error) return { errore: "Errore durante l'aggiornamento." }
+
+  // Se l'email è cambiata, aggiorna anche l'utente Auth
+  if (socioAttuale?.auth_user_id && socioAttuale.email !== dati.email) {
+    await admin.auth.admin.updateUserById(socioAttuale.auth_user_id, {
+      email: dati.email,
+    })
+  }
 
   revalidatePath('/soci')
   return { successo: true }

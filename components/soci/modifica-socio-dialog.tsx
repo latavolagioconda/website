@@ -3,9 +3,10 @@
 import { useState, useTransition, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { aggiornaBadgeSocio } from '@/app/(dashboard)/soci/actions'
+import { aggiornaSocio } from '@/app/(dashboard)/soci/actions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
   Dialog,
   DialogContent,
@@ -15,7 +16,15 @@ import {
   DialogTrigger,
   DialogFooter,
 } from '@/components/ui/dialog'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
+import { Separator } from '@/components/ui/separator'
 import { Pencil, X, Plus, Award } from 'lucide-react'
 
 const BADGE_SUGGERITI = [
@@ -33,6 +42,9 @@ interface ModificaSocioDialogProps {
   socioId: string
   nome: string
   cognome: string
+  email: string
+  ruolo: string
+  dataIscrizione: string
   badgeIniziali: string[]
 }
 
@@ -40,11 +52,16 @@ export function ModificaSocioDialog({
   socioId,
   nome,
   cognome,
+  email,
+  ruolo,
+  dataIscrizione,
   badgeIniziali,
 }: ModificaSocioDialogProps) {
   const router = useRouter()
   const [aperto, setAperto] = useState(false)
   const [pending, startTransition] = useTransition()
+
+  const [campi, setCampi] = useState({ nome, cognome, email, ruolo, dataIscrizione })
   const [badge, setBadge] = useState<string[]>(badgeIniziali)
   const [nuovoBadge, setNuovoBadge] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
@@ -61,19 +78,6 @@ export function ModificaSocioDialog({
     setBadge((prev) => prev.filter((_, i) => i !== indice))
   }
 
-  function salva() {
-    startTransition(async () => {
-      const risultato = await aggiornaBadgeSocio(socioId, badge)
-      if (risultato?.errore) {
-        toast.error(risultato.errore)
-        return
-      }
-      toast.success('Badge aggiornati.')
-      router.refresh()
-      setAperto(false)
-    })
-  }
-
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter') {
       e.preventDefault()
@@ -81,11 +85,44 @@ export function ModificaSocioDialog({
     }
   }
 
-  // Suggerimenti non ancora assegnati al socio
+  function salva() {
+    if (!campi.nome.trim() || !campi.cognome.trim() || !campi.email.trim()) {
+      toast.error('Nome, cognome ed email sono obbligatori.')
+      return
+    }
+    startTransition(async () => {
+      const risultato = await aggiornaSocio(socioId, {
+        nome: campi.nome.trim(),
+        cognome: campi.cognome.trim(),
+        email: campi.email.trim(),
+        ruolo: campi.ruolo,
+        data_iscrizione: campi.dataIscrizione,
+        badge,
+      })
+      if (risultato?.errore) {
+        toast.error(risultato.errore)
+        return
+      }
+      toast.success('Socio aggiornato.')
+      router.refresh()
+      setAperto(false)
+    })
+  }
+
+  // Reimposta i valori all'apertura del dialog
+  function handleOpenChange(open: boolean) {
+    if (open) {
+      setCampi({ nome, cognome, email, ruolo, dataIscrizione })
+      setBadge(badgeIniziali)
+      setNuovoBadge('')
+    }
+    setAperto(open)
+  }
+
   const suggerimentiDisponibili = BADGE_SUGGERITI.filter((s) => !badge.includes(s))
 
   return (
-    <Dialog open={aperto} onOpenChange={setAperto}>
+    <Dialog open={aperto} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button variant="ghost" size="icon" title="Modifica socio">
           <Pencil className="h-4 w-4" />
@@ -95,27 +132,82 @@ export function ModificaSocioDialog({
         <DialogHeader>
           <DialogTitle>Modifica socio</DialogTitle>
           <DialogDescription>
-            {nome} {cognome} — gestione badge
+            {nome} {cognome}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-5 pt-2">
+        <div className="space-y-4 pt-2">
+          {/* Anagrafica */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="mod-nome">Nome</Label>
+              <Input
+                id="mod-nome"
+                value={campi.nome}
+                onChange={(e) => setCampi((p) => ({ ...p, nome: e.target.value }))}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="mod-cognome">Cognome</Label>
+              <Input
+                id="mod-cognome"
+                value={campi.cognome}
+                onChange={(e) => setCampi((p) => ({ ...p, cognome: e.target.value }))}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="mod-email">Email</Label>
+            <Input
+              id="mod-email"
+              type="email"
+              value={campi.email}
+              onChange={(e) => setCampi((p) => ({ ...p, email: e.target.value }))}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label>Ruolo</Label>
+              <Select
+                value={campi.ruolo}
+                onValueChange={(v) => setCampi((p) => ({ ...p, ruolo: v }))}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="socio">Socio</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="mod-data">Iscritto il</Label>
+              <Input
+                id="mod-data"
+                type="date"
+                value={campi.dataIscrizione}
+                onChange={(e) => setCampi((p) => ({ ...p, dataIscrizione: e.target.value }))}
+              />
+            </div>
+          </div>
+
+          <Separator />
+
           {/* Badge assegnati */}
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm font-medium">
               <Award className="h-4 w-4 text-muted-foreground" />
-              Badge assegnati
+              Badge
             </div>
             {badge.length === 0 ? (
               <p className="text-sm text-muted-foreground">Nessun badge assegnato.</p>
             ) : (
               <div className="flex flex-wrap gap-2">
                 {badge.map((b, i) => (
-                  <Badge
-                    key={b}
-                    variant="secondary"
-                    className="flex items-center gap-1 pr-1"
-                  >
+                  <Badge key={b} variant="secondary" className="flex items-center gap-1 pr-1">
                     {b}
                     <button
                       type="button"
@@ -131,16 +223,14 @@ export function ModificaSocioDialog({
             )}
           </div>
 
-          {/* Aggiungi badge */}
           <div className="space-y-2">
-            <p className="text-xs font-medium text-muted-foreground">Aggiungi badge</p>
             <div className="flex gap-2">
               <Input
                 ref={inputRef}
                 value={nuovoBadge}
                 onChange={(e) => setNuovoBadge(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="es. Fondatore"
+                placeholder="Aggiungi badge…"
                 className="flex-1"
               />
               <Button
@@ -154,9 +244,8 @@ export function ModificaSocioDialog({
               </Button>
             </div>
 
-            {/* Suggerimenti rapidi */}
             {suggerimentiDisponibili.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 pt-1">
+              <div className="flex flex-wrap gap-1.5">
                 {suggerimentiDisponibili.map((s) => (
                   <button
                     key={s}

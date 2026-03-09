@@ -99,6 +99,9 @@ export default async function SociPage() {
                         socioId={socio.id}
                         nome={socio.nome}
                         cognome={socio.cognome}
+                        email={socio.email}
+                        ruolo={socio.ruolo}
+                        dataIscrizione={socio.data_iscrizione}
                         badgeIniziali={socio.badge ?? []}
                       />
                       <GestisciProfiloDialog
