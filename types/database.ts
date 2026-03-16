@@ -148,6 +148,7 @@ export type Database = {
           id: string
           nickname: string | null
           nome: string
+          numero_tessera: string | null
           pubblica_bio: boolean
           pubblica_data_nascita: boolean
           pubblica_email: boolean
@@ -155,6 +156,7 @@ export type Database = {
           pubblica_nome_completo: boolean
           pubblica_telefono: boolean
           ruolo: string
+          scadenza_tessera: string | null
           social_bluesky: string | null
           social_discord: string | null
           social_facebook: string | null
@@ -178,6 +180,7 @@ export type Database = {
           id?: string
           nickname?: string | null
           nome: string
+          numero_tessera?: string | null
           pubblica_bio?: boolean
           pubblica_data_nascita?: boolean
           pubblica_email?: boolean
@@ -185,6 +188,7 @@ export type Database = {
           pubblica_nome_completo?: boolean
           pubblica_telefono?: boolean
           ruolo?: string
+          scadenza_tessera?: string | null
           social_bluesky?: string | null
           social_discord?: string | null
           social_facebook?: string | null
@@ -208,6 +212,7 @@ export type Database = {
           id?: string
           nickname?: string | null
           nome?: string
+          numero_tessera?: string | null
           pubblica_bio?: boolean
           pubblica_data_nascita?: boolean
           pubblica_email?: boolean
@@ -215,6 +220,7 @@ export type Database = {
           pubblica_nome_completo?: boolean
           pubblica_telefono?: boolean
           ruolo?: string
+          scadenza_tessera?: string | null
           social_bluesky?: string | null
           social_discord?: string | null
           social_facebook?: string | null
@@ -372,6 +378,7 @@ export interface VistaProfiliPubblici {
   cognome: string | null
   data_iscrizione: string
   avatar_url: string | null
+  numero_tessera: string | null
   bio: string | null
   giochi_preferiti: string[] | null
   email: string | null

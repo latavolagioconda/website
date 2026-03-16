@@ -41,6 +41,9 @@ export default async function SociPage() {
     (profili ?? []).map((p) => [p.socio_id, p])
   )
 
+  const oggi = new Date()
+  oggi.setHours(0, 0, 0, 0)
+
   const totale = soci?.length ?? 0
   const attivi = soci?.filter((s) => s.attivo).length ?? 0
 
@@ -65,6 +68,7 @@ export default async function SociPage() {
               <TableHead>Email</TableHead>
               <TableHead>Ruolo</TableHead>
               <TableHead>Iscritto il</TableHead>
+              <TableHead>Tessera</TableHead>
               <TableHead>Stato</TableHead>
               <TableHead className="w-[140px] text-right">Azioni</TableHead>
             </TableRow>
@@ -72,8 +76,11 @@ export default async function SociPage() {
           <TableBody>
             {soci?.map((socio) => {
               const profilo = mapProfili.get(socio.id) ?? null
+              const tessScaduta = socio.scadenza_tessera
+                ? new Date(socio.scadenza_tessera) < oggi
+                : false
               return (
-                <TableRow key={socio.id}>
+                <TableRow key={socio.id} className={tessScaduta ? 'border-l-4 border-l-destructive' : undefined}>
                   <TableCell className="font-medium">
                     {socio.cognome} {socio.nome}
                   </TableCell>
@@ -87,6 +94,20 @@ export default async function SociPage() {
                   </TableCell>
                   <TableCell className="text-muted-foreground">
                     {new Date(socio.data_iscrizione).toLocaleDateString('it-IT')}
+                  </TableCell>
+                  <TableCell>
+                    {socio.numero_tessera ? (
+                      <span className="text-sm font-mono">
+                        {socio.numero_tessera}
+                        {socio.scadenza_tessera && (
+                          <span className={`ml-1.5 text-xs ${tessScaduta ? 'text-destructive font-semibold' : 'text-muted-foreground'}`}>
+                            (sc. {new Date(socio.scadenza_tessera).toLocaleDateString('it-IT')})
+                          </span>
+                        )}
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground text-sm">—</span>
+                    )}
                   </TableCell>
                   <TableCell>
                     <Badge variant={socio.attivo ? 'outline' : 'destructive'}>
@@ -103,6 +124,8 @@ export default async function SociPage() {
                         ruolo={socio.ruolo}
                         dataIscrizione={socio.data_iscrizione}
                         badgeIniziali={socio.badge ?? []}
+                        numeroTessera={socio.numero_tessera}
+                        scadenzaTessera={socio.scadenza_tessera}
                       />
                       <GestisciProfiloDialog
                         socioId={socio.id}
@@ -119,7 +142,7 @@ export default async function SociPage() {
             {(!soci || soci.length === 0) && (
               <TableRow>
                 <TableCell
-                  colSpan={6}
+                  colSpan={7}
                   className="py-8 text-center text-muted-foreground"
                 >
                   Nessun socio trovato.

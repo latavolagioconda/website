@@ -25,7 +25,7 @@ import {
 } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { Pencil, X, Plus, Award, KeyRound } from 'lucide-react'
+import { Pencil, X, Plus, Award, KeyRound, CreditCard } from 'lucide-react'
 
 const BADGE_SUGGERITI = [
   'Fondatore',
@@ -46,6 +46,8 @@ interface ModificaSocioDialogProps {
   ruolo: string
   dataIscrizione: string
   badgeIniziali: string[]
+  numeroTessera: string | null
+  scadenzaTessera: string | null
 }
 
 export function ModificaSocioDialog({
@@ -56,12 +58,14 @@ export function ModificaSocioDialog({
   ruolo,
   dataIscrizione,
   badgeIniziali,
+  numeroTessera,
+  scadenzaTessera,
 }: ModificaSocioDialogProps) {
   const router = useRouter()
   const [aperto, setAperto] = useState(false)
   const [pending, startTransition] = useTransition()
 
-  const [campi, setCampi] = useState({ nome, cognome, email, ruolo, dataIscrizione })
+  const [campi, setCampi] = useState({ nome, cognome, email, ruolo, dataIscrizione, numeroTessera: numeroTessera ?? '', scadenzaTessera: scadenzaTessera ?? '' })
   const [badge, setBadge] = useState<string[]>(badgeIniziali)
   const [nuovoBadge, setNuovoBadge] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
@@ -100,6 +104,8 @@ export function ModificaSocioDialog({
         ruolo: campi.ruolo,
         data_iscrizione: campi.dataIscrizione,
         badge,
+        numero_tessera: campi.numeroTessera.trim() || null,
+        scadenza_tessera: campi.scadenzaTessera || null,
       })
       if (risultato?.errore) {
         toast.error(risultato.errore)
@@ -130,7 +136,7 @@ export function ModificaSocioDialog({
   // Reimposta i valori all'apertura del dialog
   function handleOpenChange(open: boolean) {
     if (open) {
-      setCampi({ nome, cognome, email, ruolo, dataIscrizione })
+      setCampi({ nome, cognome, email, ruolo, dataIscrizione, numeroTessera: numeroTessera ?? '', scadenzaTessera: scadenzaTessera ?? '' })
       setBadge(badgeIniziali)
       setNuovoBadge('')
       setNuovaPassword('')
@@ -210,6 +216,36 @@ export function ModificaSocioDialog({
                 value={campi.dataIscrizione}
                 onChange={(e) => setCampi((p) => ({ ...p, dataIscrizione: e.target.value }))}
               />
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* Tessera */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-sm font-medium">
+              <CreditCard className="h-4 w-4 text-muted-foreground" />
+              Tessera
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="mod-num-tessera">Numero tessera</Label>
+                <Input
+                  id="mod-num-tessera"
+                  value={campi.numeroTessera}
+                  onChange={(e) => setCampi((p) => ({ ...p, numeroTessera: e.target.value }))}
+                  placeholder="es. 2024-001"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="mod-scadenza-tessera">Scadenza tessera</Label>
+                <Input
+                  id="mod-scadenza-tessera"
+                  type="date"
+                  value={campi.scadenzaTessera}
+                  onChange={(e) => setCampi((p) => ({ ...p, scadenzaTessera: e.target.value }))}
+                />
+              </div>
             </div>
           </div>
 

@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { Mail, Phone, Calendar, Gamepad2, ExternalLink, Award } from 'lucide-react'
+import { Mail, Phone, Calendar, Gamepad2, ExternalLink, Award, CreditCard } from 'lucide-react'
 import { gravatarUrl } from '@/lib/gravatar'
 import { Navbar } from '@/components/navbar'
 import type { VistaProfiliPubblici } from '@/types/database'
@@ -88,6 +88,12 @@ export default async function ProfiloPubblicoPage({ params }: Props) {
                 </p>
               )}
               <p className="text-sm text-muted-foreground mt-1">Socio dal {dataIscrizione}</p>
+              {profilo.numero_tessera && (
+                <p className="inline-flex items-center gap-1.5 text-sm text-muted-foreground font-mono mt-0.5">
+                  <CreditCard className="h-3.5 w-3.5" />
+                  Tessera {profilo.numero_tessera}
+                </p>
+              )}
             </div>
           </div>
 

@@ -7,7 +7,7 @@ import { Separator } from '@/components/ui/separator'
 import { FormProfilo } from '@/components/profilo/form-profilo'
 import { FormCambiaPassword } from '@/components/profilo/form-cambia-password'
 import { gravatarUrl } from '@/lib/gravatar'
-import { Award } from 'lucide-react'
+import { Award, CreditCard } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Il mio profilo — La Tavola Gioconda',
@@ -24,7 +24,7 @@ export default async function ProfiloPage() {
   const { data: socio } = await supabase
     .from('soci')
     .select(
-      'nome, cognome, nickname, email, ruolo, data_iscrizione, bio, telefono, avatar_url, data_nascita, giochi_preferiti, badge, pubblica_nome_completo, pubblica_bio, pubblica_giochi, pubblica_email, pubblica_telefono, pubblica_data_nascita, social_x, social_instagram, social_bluesky, social_facebook, social_discord, social_steam'
+      'nome, cognome, nickname, email, ruolo, data_iscrizione, bio, telefono, avatar_url, data_nascita, giochi_preferiti, badge, numero_tessera, pubblica_nome_completo, pubblica_bio, pubblica_giochi, pubblica_email, pubblica_telefono, pubblica_data_nascita, social_x, social_instagram, social_bluesky, social_facebook, social_discord, social_steam'
     )
     .eq('auth_user_id', user.id)
     .single()
@@ -66,6 +66,12 @@ export default async function ProfiloPage() {
               </Badge>
             ))}
             <span className="text-sm text-muted-foreground">Socio dal {dataIscrizione}</span>
+            {socio.numero_tessera && (
+              <span className="inline-flex items-center gap-1 text-sm text-muted-foreground font-mono">
+                <CreditCard className="h-3.5 w-3.5" />
+                {socio.numero_tessera}
+              </span>
+            )}
           </div>
         </div>
       </div>

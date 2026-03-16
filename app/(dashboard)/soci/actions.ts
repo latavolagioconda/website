@@ -126,6 +126,8 @@ export async function aggiornaSocio(
     ruolo: string
     data_iscrizione: string
     badge: string[]
+    numero_tessera: string | null
+    scadenza_tessera: string | null
   }
 ): Promise<StatoSocio> {
   const admin_user = await verificaAdmin()

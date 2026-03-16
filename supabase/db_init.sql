@@ -56,6 +56,10 @@ create table if not exists soci (
   social_facebook         text,
   social_discord          text,
   social_steam            text,
+  -- Badge e tessera
+  badge                   text[] not null default '{}',
+  numero_tessera          text,
+  scadenza_tessera        date,
   created_at              timestamptz not null default now()
 );
 
@@ -162,19 +166,21 @@ select
   s.nickname,
   s.data_iscrizione,
   s.avatar_url,
-  case when s.pubblica_nome_completo  then s.nome              else null end as nome,
-  case when s.pubblica_nome_completo  then s.cognome           else null end as cognome,
-  case when s.pubblica_bio            then s.bio               else null end as bio,
-  case when s.pubblica_giochi         then s.giochi_preferiti  else null end as giochi_preferiti,
-  case when s.pubblica_email          then s.email             else null end as email,
-  case when s.pubblica_telefono       then s.telefono          else null end as telefono,
+  s.numero_tessera,
+  case when s.pubblica_nome_completo  then s.nome               else null end as nome,
+  case when s.pubblica_nome_completo  then s.cognome            else null end as cognome,
+  case when s.pubblica_bio            then s.bio                else null end as bio,
+  case when s.pubblica_giochi         then s.giochi_preferiti   else null end as giochi_preferiti,
+  case when s.pubblica_email          then s.email              else null end as email,
+  case when s.pubblica_telefono       then s.telefono           else null end as telefono,
   case when s.pubblica_data_nascita   then s.data_nascita::text else null end as data_nascita,
   s.social_x,
   s.social_instagram,
   s.social_bluesky,
   s.social_facebook,
   s.social_discord,
-  s.social_steam
+  s.social_steam,
+  s.badge
 from profili_pubblici pp
 join soci s on s.id = pp.socio_id
 where pp.abilitato = true;
