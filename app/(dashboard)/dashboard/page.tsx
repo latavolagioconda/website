@@ -18,7 +18,7 @@ export default async function DashboardPage() {
       .select('id, titolo, tipo, data_inizio, luogo')
       .gte('data_inizio', new Date().toISOString())
       .order('data_inizio', { ascending: true })
-      .limit(5),
+      .limit(3),
   ])
 
   return (
