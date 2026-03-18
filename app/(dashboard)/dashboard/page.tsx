@@ -8,7 +8,14 @@ export const metadata: Metadata = {
 export default async function DashboardPage() {
   const supabase = await createClient()
 
-  const [{ count: contatoreSoci }, { data: prossimiEventi }] = await Promise.all([
+  const { data: { user } } = await supabase.auth.getUser()
+
+  const [{ data: socioCorrente }, { count: contatoreSoci }, { data: prossimiEventi }] = await Promise.all([
+    supabase
+      .from('soci')
+      .select('ruolo')
+      .eq('auth_user_id', user!.id)
+      .single(),
     supabase
       .from('soci')
       .select('*', { count: 'exact', head: true })
@@ -21,6 +28,8 @@ export default async function DashboardPage() {
       .limit(3),
   ])
 
+  const isAdmin = socioCorrente?.ruolo === 'admin'
+
   return (
     <div className="space-y-8">
       <div>
@@ -28,12 +37,14 @@ export default async function DashboardPage() {
         <p className="text-muted-foreground">Benvenuto nell&apos;area riservata.</p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <div className="rounded-lg border bg-card p-6">
-          <p className="text-sm text-muted-foreground">Soci attivi</p>
-          <p className="mt-1 text-3xl font-bold">{contatoreSoci ?? 0}</p>
+      {isAdmin && (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="rounded-lg border bg-card p-6">
+            <p className="text-sm text-muted-foreground">Soci attivi</p>
+            <p className="mt-1 text-3xl font-bold">{contatoreSoci ?? 0}</p>
+          </div>
         </div>
-      </div>
+      )}
 
       {prossimiEventi && prossimiEventi.length > 0 && (
         <div>

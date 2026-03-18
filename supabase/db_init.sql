@@ -83,6 +83,12 @@ create policy "soci_delete_admin"
   on soci for delete
   using (is_admin());
 
+-- Ogni socio può aggiornare il proprio record (campi profilo)
+create policy "soci_update_profilo_personale"
+  on soci for update
+  using (auth_user_id = auth.uid())
+  with check (auth_user_id = auth.uid());
+
 
 -- ============================================================
 -- TABELLA: eventi
