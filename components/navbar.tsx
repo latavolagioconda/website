@@ -18,6 +18,7 @@ import {
   Calendar,
   User,
   Users,
+  CreditCard,
   Menu,
   X,
   LogOut,
@@ -39,6 +40,7 @@ interface NavbarProps {
 const vociBase = [
   { href: '/dashboard', etichetta: 'Dashboard', Icona: LayoutDashboard },
   { href: '/eventi',    etichetta: 'Eventi',     Icona: Calendar },
+  { href: '/tessera',   etichetta: 'Tessera',    Icona: CreditCard },
   { href: '/profilo',   etichetta: 'Profilo',    Icona: User },
 ]
 
